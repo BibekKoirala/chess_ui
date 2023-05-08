@@ -12,36 +12,124 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Alert, Backdrop, Paper, Snackbar } from '@mui/material';
+import { useState } from 'react';
+import CommonRegex from '../../Common/CommonRegex';
+import CircularProgressBar from "@mui/material/CircularProgress";
+import { NotificationTypeEnum } from '../../Common/CommonEnum';
+import RequestHelper from '../../Common/RequestHelper';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const theme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [usernameError, setUsernameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState('success');
+
+  const showMessage = (message, type) => {
+    setMessage(message);
+    setType(type);
+    setOpen(true);
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
   };
+
+  const handleSubmit = (event) => {
+    setLoading(true);
+    let noOfEmptyFields = [username, password].filter((e)=> e === "")
+    if (noOfEmptyFields.length >1) {
+        setLoading(false);
+        showMessage("All fields are required!", NotificationTypeEnum.Error);
+        return
+    }
+    else if(usernameError || !username){
+      setLoading(false);
+      showMessage("Please provide a valid username.", NotificationTypeEnum.Error);
+      return;
+  }
+    else if(passwordError || !password){
+        setLoading(false);
+        showMessage("Please provide a valid password.", NotificationTypeEnum.Error);
+        return;
+    }
+    
+    RequestHelper.Post('login', {
+      username: username,
+      password: password,
+    }, (res, success)=>{
+      setLoading(false);
+      if (res) {
+          if (success) {
+            localStorage.setItem('chess_userinfo', res.data.data);
+            showMessage(res.data.message, NotificationTypeEnum.Success);
+          }
+          else if (res.data) {
+            showMessage(res.data.message, NotificationTypeEnum.Error);
+          }
+          else {
+            showMessage(res.data.message, NotificationTypeEnum.Error);
+          }
+      }
+      else {
+        showMessage("Something went wrong.", NotificationTypeEnum.Error);
+      }
+    })
+  };
+
+  const handleChange = (event) => {
+    if (event.target.name === "username") {
+        if (event.target.value.length < 4 || ! CommonRegex.usernameReGex.test(event.target.value)) {
+            setUsernameError(true);
+        }
+        else {
+            setUsernameError(false);
+        }
+        setUsername(event.target.value);
+    }else if (event.target.name === "password") {
+        if ( ! CommonRegex.passwordReGex.test(event.target.value)) {
+            setPasswordError(true);
+        }
+        else {
+            setPasswordError(false);
+        }
+        setPassword(event.target.value);
+    }
+    else {
+        return;
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <Snackbar open={open} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity={type} sx={{ width: '100%' }}>
+                {message}
+            </Alert>
+        </Snackbar>
+        <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgressBar color="inherit" />
+      </Backdrop>
+        <Paper style={{padding: 20, marginTop: '30%'}}>
         <Box
           sx={{
             marginTop: 8,
@@ -56,18 +144,23 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box >
             <TextField
+              error={usernameError}
+              value={username}
+              onChange={handleChange}
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
               autoFocus
             />
             <TextField
+              error={passwordError}
+              value={password}
+              onChange={handleChange}
               margin="normal"
               required
               fullWidth
@@ -75,14 +168,13 @@ export default function SignIn() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
             <Button
-              type="submit"
+              onClick={handleSubmit}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
@@ -91,19 +183,19 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="forgetpassword" variant="body2">
+                <Link href="/forgetpassword" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/register" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Paper>
       </Container>
     </ThemeProvider>
   );
