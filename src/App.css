@@ -6,3 +6,14 @@
 .login-chessboard {
   padding: 50px;
 }
+
+.register-datepicker {
+  width: 100% !important;
+}
+
+.form-input {
+  border-color: antiquewhite !important;
+  color: antiquewhite !important;
+  background-color: #A5D7E8;
+  margin-block: 20px !important;
+}
