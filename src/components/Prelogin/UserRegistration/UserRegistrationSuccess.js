@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Grid, Paper, Typography, } from '@mui/material'
 import ErrorIcon from '@mui/icons-material/Error';
-import Color from '../../Theme/Color';
+import Color from '../../../Theme/Color';
 
 function UserRegistrationSuccess(props) {
 

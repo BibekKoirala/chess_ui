@@ -12,16 +12,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import moment from 'moment'
-import dayjs from 'dayjs';
-import Color from "../../Theme/Color";
-import CommonRegex from "../../Common/CommonRegex";
-import { NotificationTypeEnum, ResponseTypeEnum } from "../../Common/CommonEnum";
+import CommonRegex from "../../../Common/CommonRegex";
+import { NotificationTypeEnum, ResponseTypeEnum } from "../../../Common/CommonEnum";
 import { Snackbar, Alert, Paper, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material'
-import RequestHelper from "../../Common/RequestHelper";
+import RequestHelper from "../../../Common/RequestHelper";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgressBar from "@mui/material/CircularProgress";
 import { useParams, useNavigate } from "react-router-dom";

@@ -14,6 +14,48 @@
 .form-input {
   border-color: antiquewhite !important;
   color: antiquewhite !important;
-  background-color: #A5D7E8;
+  background-color: #a5d7e8;
   margin-block: 20px !important;
+}
+
+.settingPaper{
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 20px; 
+  background-color: #576CBC !important;
+}
+
+.settingoptions {
+  border-radius: 4px;
+  margin-right: 20px !important;
+  border: 5px solid; 
+  color: beige;
+}
+
+.settingSave {
+  margin-top: 40px !important;
+  width: 20%;
+}
+
+.navitem {
+  margin-top: 10px !important;
+  margin-inline: 20px !important;
+}
+
+.navitem > a {
+  text-decoration: none;
+  color: antiquewhite;
+}
+
+.navitem > a > div {
+  justify-content: center !important;
+  display: flex !important;
+}
+
+.navitem > a > div > svg {
+  margin-left: 10px;
+}
+
+.navitemcontainer {
+  justify-content: center;
 }
