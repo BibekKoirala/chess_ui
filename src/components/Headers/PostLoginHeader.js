@@ -7,13 +7,14 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { styled } from "@mui/material/styles";
-import { Remove_UserInfo } from "../../Redux/Action/UserAction";
+import { Remove_UserInfo, removeUserInfo } from "../../Redux/Action/UserAction";
 import { connect } from "react-redux";
 import { Grid } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Settings } from "@mui/icons-material";
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import { removeUserSetting } from "../../Redux/Action/SettingsAction";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: "flex",
@@ -36,7 +37,7 @@ function PostLoginHeader(props) {
             <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
               Hi {props?.user?.username},
             </Typography>
-            <Button onClick={props.logout} color="inherit">
+            <Button onClick={props.logout} id="logout" color="inherit">
               Logout
             </Button>
           </Grid>
@@ -74,7 +75,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  logout: () => dispatch({ type: Remove_UserInfo }),
+  logout: () =>{ dispatch(removeUserInfo()); dispatch(removeUserSetting())},
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostLoginHeader);

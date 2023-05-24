@@ -1,13 +1,15 @@
-import { Remove_Settings, Set_Settings } from "../Action/SettingsAction"
+import { Remove_Settings, Set_Multiplayer, Set_Settings } from "../Action/SettingsAction"
 
 const initialState = {
     against: 1,
     time: 10,
     difficulty: 1,
-    playas: 1,
+    playas: 'a',
+    multiplayertoken: null,
+    multiplayer_playas: "a"
 }
 
-export const userReducer = (state= initialState, action) => {
+export const settingReducer = (state= initialState, action) => {
     switch (action.type) {
         case Set_Settings: {
             return {
@@ -21,6 +23,13 @@ export const userReducer = (state= initialState, action) => {
         case Remove_Settings: {
             return {
                 ...initialState
+            }
+        }
+        case Set_Multiplayer: {
+            return {
+                ...state,
+                multiplayertoken: action.payload.multiplayertoken,
+                multiplayer_playas: action.payload.multiplayer_playas,
             }
         }
         default: {

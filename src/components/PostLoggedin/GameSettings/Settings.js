@@ -7,12 +7,14 @@ import white from "../../../Images/White.png";
 import anycolor from "../../../Images/AnyColor.png";
 
 import { green, red, yellow } from "@mui/material/colors";
+import { setUserSetting } from "../../../Redux/Action/SettingsAction";
+import { connect } from "react-redux";
 
-function Settings() {
-  const [against, setAgainst] = useState(1);
-  const [time, setTime] = useState(1);
-  const [difficulty, setDifficulty] = useState(1);
-  const [playas, setPlayas] = useState(1);
+function Settings(props) {
+  const [against, setAgainst] = useState(props.setting.against);
+  const [time, setTime] = useState(props.setting.time);
+  const [difficulty, setDifficulty] = useState(props.setting.difficulty);
+  const [playas, setPlayas] = useState(props.setting.playas);
 
   const handleAgainstChange = (val) => {
     setAgainst(val);
@@ -29,6 +31,15 @@ function Settings() {
   const handlePlayasChange = (val) => {
     setPlayas(val);
   };
+
+  const handleOnSave = () => {
+    props.setSettings({
+        against: against,
+        time: time,
+        difficulty: difficulty,
+        playas: playas,
+    })
+  }
 
   return (
     <Grid textAlign={"center"} justifyContent={"center"} container>
@@ -224,9 +235,9 @@ function Settings() {
               Play As:{" "}
             </Typography>
             <div
-              onClick={() => handlePlayasChange(1)}
+              onClick={() => handlePlayasChange('b')}
               style={{
-                borderColor: `${playas == 1 ? "#00FFFF" : "gray"}`,
+                borderColor: `${playas == 'b' ? "#00FFFF" : "gray"}`,
               }}
               className={"settingoptions"}
             >
@@ -240,9 +251,9 @@ function Settings() {
             </div>
 
             <div
-              onClick={() => handlePlayasChange(2)}
+              onClick={() => handlePlayasChange('a')}
               style={{
-                borderColor: `${playas == 2 ? "#00FFFF" : "gray"}`,
+                borderColor: `${playas == 'a' ? "#00FFFF" : "gray"}`,
               }}
               className={"settingoptions"}
             >
@@ -256,9 +267,9 @@ function Settings() {
             </div>
 
             <div
-              onClick={() => handlePlayasChange(3)}
+              onClick={() => handlePlayasChange('w')}
               style={{
-                borderColor: `${playas == 3 ? "#00FFFF" : "gray"}`,
+                borderColor: `${playas == 'w' ? "#00FFFF" : "gray"}`,
               }}
               className={"settingoptions"}
             >
@@ -272,7 +283,7 @@ function Settings() {
             </div>
           </Grid>
 
-          <Button color="primary" className="settingSave" variant="contained">
+          <Button color="primary" className="settingSave" onClick={handleOnSave} variant="contained">
             Save
           </Button>
         </Paper>
@@ -281,4 +292,13 @@ function Settings() {
   );
 }
 
-export default Settings;
+const mapStateToProps = (state) => ({
+    setting: state.setting
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    setSettings: (setting) => dispatch(setUserSetting(setting))
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);
