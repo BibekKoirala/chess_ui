@@ -18,11 +18,14 @@ import CommonRegex from '../../Common/CommonRegex';
 import CircularProgressBar from "@mui/material/CircularProgress";
 import { NotificationTypeEnum } from '../../Common/CommonEnum';
 import RequestHelper from '../../Common/RequestHelper';
+import { Set_UserInfo } from '../../Redux/Action/UserAction';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 
 const theme = createTheme();
 
-export default function SignIn() {
+function SignIn(props) {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -34,6 +37,7 @@ export default function SignIn() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [type, setType] = useState('success');
+  const navigate = useNavigate()
 
   const showMessage = (message, type) => {
     setMessage(message);
@@ -75,7 +79,9 @@ export default function SignIn() {
       setLoading(false);
       if (res) {
           if (success) {
-            localStorage.setItem('chess_userinfo', res.data.data);
+            props.setUser(res.data.data);
+            localStorage.setItem('chess_userinfo', JSON.stringify(res.data.data));
+            navigate('/setting')
             showMessage(res.data.message, NotificationTypeEnum.Success);
           }
           else if (res.data) {
@@ -200,3 +206,13 @@ export default function SignIn() {
     </ThemeProvider>
   );
 }
+
+const mapStateToProps = (state) => ({})
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setUser : (user) => dispatch({ type: Set_UserInfo, payload: user})
+  }
+}
+
+export default connect(mapStateToProps ,mapDispatchToProps)(SignIn);
