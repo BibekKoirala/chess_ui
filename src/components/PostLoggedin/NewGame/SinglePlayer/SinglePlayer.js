@@ -6,21 +6,18 @@ import { connect } from "react-redux";
 import ChessEngine from "./engineClass";
 // import engineGame from "./engine";
 
-var Engine = new ChessEngine('w')
+var Engine = new ChessEngine("w");
 function SinglePlayer(props) {
-
   const [game, setGame] = useState(Engine.GetCurrentPosition());
   const { difficulty, playas } = props.setting;
 
-  useEffect(() =>{
+  useEffect(() => {
     //const engine = engineGame();
     //engine.start();
     //engine.setPlayerColor('black');
-
-  },[])
+  }, []);
 
   useEffect(() => {
-
     // if (game.turn() !== playas) {
     //     if (difficulty == 1) {
     //         makeEasyMove();
@@ -62,25 +59,26 @@ function SinglePlayer(props) {
   function makeAMove(move) {
     let gameCopy = new Chess(game.fen());
     const result = gameCopy.move(move);
-    gameCopy._history = [... game._history, ...gameCopy._history]
+    gameCopy._history = [...game._history, ...gameCopy._history];
     setGame(gameCopy);
     return result; // null if the move was illegal, the move object if the move was legal
   }
 
   function onDrop(sourceSquare, targetSquare) {
     Engine.onDrop(sourceSquare, targetSquare);
-    setGame(Engine.GetCurrentPosition())
+    setGame(Engine.GetCurrentPosition());
   }
 
-  console.log(game)
+  console.log(game);
   return (
-    <Grid justifyContent={"center"} container>
+    <Grid justifyContent={"center"} container className="container-main">
       <Grid className="login-chessboard" item lg={6} md={8} xs={12}>
         <Chessboard
           areArrowsAllowed
           position={Engine.GetCurrentPosition()}
           onPieceDrop={onDrop}
           id="BasicBoard"
+          boardOrientation={props.setting.playas == "b" ? "black" : "white"}
         />
       </Grid>
     </Grid>

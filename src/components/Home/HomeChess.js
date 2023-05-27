@@ -8,9 +8,6 @@ function HomeChess() {
       <Grid className="login-chessboard" item xs={12}>
         <Chessboard id="BasicBoard" />
       </Grid>
-      <Grid item xs={12}>
-        Play with Friends
-      </Grid>
     </Grid>
   );
 }
