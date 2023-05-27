@@ -1,21 +1,16 @@
-import React from 'react'
-import PostLoginHeader from './PostLoginHeader'
-import PreLoginHeader from './PreLoginHeader'
-import { connect } from 'react-redux'
+import React from "react";
+import PostLoginHeader from "./PostLoginHeader";
+import PreLoginHeader from "./PreLoginHeader";
+import { connect } from "react-redux";
 
 function MainHeader(props) {
-
-  return (
-    props.user.token?<PostLoginHeader />: <PreLoginHeader />
-  )
+  return props.user.token ? <PostLoginHeader /> : <></>;
 }
 
 const mapStateToProps = (state) => ({
-    user: state.User
-})
+  user: state.User,
+});
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({});
 
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(MainHeader)
+export default connect(mapStateToProps, mapDispatchToProps)(MainHeader);

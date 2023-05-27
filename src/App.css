@@ -1,10 +1,27 @@
 .App {
-  background-color: #0b2447;
   color: antiquewhite !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  height: 0px;
+  text-align: center;
 }
 
 .login-chessboard {
   padding: 50px;
+}
+
+.multiplayer-chessboard {
+  padding-inline: 0px;
 }
 
 .register-datepicker {
@@ -14,21 +31,24 @@
 .form-input {
   border-color: antiquewhite !important;
   color: antiquewhite !important;
-  background-color: #a5d7e8;
   margin-block: 20px !important;
 }
 
-.settingPaper{
+.form-input input {
+  color: whitesmoke !important;
+}
+
+.settingPaper {
   border-radius: 20px;
   padding: 20px;
-  margin-top: 20px; 
-  background-color: #576CBC !important;
+  margin-top: 20px;
+  background-color: #576cbc !important;
 }
 
 .settingoptions {
   border-radius: 4px;
   margin-right: 20px !important;
-  border: 5px solid; 
+  border: 5px solid;
   color: beige;
 }
 
@@ -58,4 +78,78 @@
 
 .navitemcontainer {
   justify-content: center;
+}
+
+.Snackbarmain {
+  width: 100% !important;
+  position: fixed !important;
+  top: 0 !important;
+  height: 100px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.Snackbarmain > div {
+  height: 100px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.Snackbarmain > div > div > .MuiSvgIcon-root {
+  height: 30px !important;
+  width: 30px !important;
+  color: antiquewhite;
+}
+
+.Snackbarmessage > .MuiAlert-message {
+  font-size: 25px !important;
+  font-weight: 600;
+  color: antiquewhite;
+}
+
+.MuiAlert-standardError {
+  background-color: red !important;
+}
+
+.MuiAlert-standardSuccess {
+  background-color: green !important;
+}
+
+.MuiAlert-standardInfo {
+  background-color: blue !important;
+}
+
+.MuiAlert-standardWarning {
+  background-color: RGB(198, 144, 53) !important;
+}
+
+.Snackbarmessage > div > button > .MuiSvgIcon-root {
+  height: 30px !important;
+  width: 30px !important;
+  color: antiquewhite;
+}
+
+.btn-newgame {
+  margin-top: 30px !important;
+  width: 100%;
+}
+
+@media screen and (min-width: 900px) {
+  .container-main {
+    padding-left: 240px !important;
+  }
+
+  .nav-bar {
+    height: 0px !important;
+  }
+
+  .MuiBox-root .css-1ugbrec {
+    height: 0px !important;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .container-main {
+    padding: 20px !important;
+  }
 }

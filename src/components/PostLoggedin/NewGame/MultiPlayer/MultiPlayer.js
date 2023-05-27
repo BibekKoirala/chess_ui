@@ -1,17 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { Chessboard } from "react-chessboard";
-import { Backdrop, Grid, Typography } from "@mui/material";
+import {
+  Backdrop,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { Chess } from "chess.js";
 import { connect } from "react-redux";
 import { BaseUrl } from "../../../../ServerSetting";
-import { GameAction } from "../../../../Common/CommonEnum";
+import {
+  GameAction,
+  NotificationTypeEnum,
+} from "../../../../Common/CommonEnum";
 import { setMultiplayer } from "../../../../Redux/Action/SettingsAction";
 import CircularProgressBar from "@mui/material/CircularProgress";
+import { WebsocketContext } from "../../../WebsocketContext";
+import Sideoption from "./StartSidebar/Sideoption";
+import GameSideoption from "./GameSidebar/GameSideoption";
+import SearchSideoption from "./SearchSidebar/SearchSideoption";
+import CustomSnackbar from "../../../Common/Snackbar";
 
 function MultiPlayer(props) {
   const [game, setGame] = useState(new Chess());
-  const [ws, setWs] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState(false);
+  const [endCondition, setEndCondition] = useState("");
+  const [open, setOpen] = useState(false);
+  const [start, setStart] = useState(false);
+  const [opponentLeft, setOpponentLeft] = useState(false);
+
+  const messageRef = useRef("");
+  const timerRef = useRef(15);
 
   const WSMessage = (action, message, payload) => {
     return payload
@@ -19,68 +44,185 @@ function MultiPlayer(props) {
       : JSON.stringify({ action: action, message: message });
   };
 
-  useEffect(() => {
-    const wstemp = new WebSocket(`${BaseUrl.replace("http", "ws")}`);
-    setWs(wstemp);
-  }, []);
+  const [ready, val, send] = useContext(WebsocketContext);
 
-  if (ws) {
-    ws.onopen = (e) => {
-      ws.send(
-        JSON.stringify({
-          action: "Search",
-          payload: { token: props.user.token, id: props.user.id },
+  const handleStart = () => {
+    setSearch(false);
+    setStart(true);
+  };
+
+  const handleSearch = () => {
+    setStart(false);
+    setSearch(true);
+  };
+
+  const handleCancelSearch = () => {
+    setSearch(false);
+    setStart(false);
+  };
+
+  useEffect(() => {
+    if (props.setting.multiplayertoken && ready) {
+      send(
+        WSMessage(GameAction.Rejoin, "Rejoin", {
+          token: props.setting.multiplayertoken,
+          id: props.user.id,
         })
       );
-    };
+    }
+  }, []);
 
-    ws.onmessage = (message) => {
-      try {
-        message = JSON.parse(message.data);
+  useEffect(() => {
+    let message = val;
+    if (ready) {
+      if (message) {
         switch (message.action) {
+          case GameAction.Search: {
+            handleSearch();
+            break;
+          }
           case GameAction.Expired_Token: {
             document.getElementById("logout").click();
             break;
           }
+          case GameAction.Cancel_Search: {
+            handleCancelSearch();
+            messageRef.current.showMessage(
+              message.message,
+              NotificationTypeEnum.Info
+            );
+            break;
+          }
           case GameAction.Game_Started: {
             setLoading(false);
+            handleStart();
             props.setMultiplayer({
               multiplayertoken: message.payload.token,
               multiplayer_playas: message.payload.piece,
             });
+            setGame(new Chess());
             break;
           }
           case GameAction.Opponent_Move: {
             makeAMove(message.payload.move);
             break;
           }
-          case GameAction.Joined: {
+          case GameAction.Game_Over: {
+            if (message.payload.draw) {
+              try {
+                makeAMove(message.payload.move);
+              } catch (e) {
+                console.log(e.message);
+              }
+            } else if (!message.payload.win) {
+              makeAMove(message.payload.move);
+            }
+            props.setMultiplayer({
+              multiplayertoken: null,
+              multiplayer_playas: props.setting.multiplayer_playas,
+            });
+            setTimeout(() => {
+              setOpen(true);
+            }, 1000);
+            setEndCondition(message.message);
+            break;
+          }
+          case GameAction.Rejoin_Success: {
+            let tempgame = new Chess(message.payload.fen);
+            tempgame._history = message.payload.history;
+            setGame(tempgame);
+            handleStart();
+            break;
+          }
+          case GameAction.Rejoin_Failure: {
+            props.setMultiplayer({
+              multiplayertoken: null,
+              multiplayer_playas: "w",
+            });
+            messageRef.current.showMessage(
+              message.message,
+              NotificationTypeEnum.Error
+            );
+            break;
+          }
+          case GameAction.Opponent_Left: {
+            setOpponentLeft(true);
+            var timeout = setInterval(() => {
+              timerRef.current = timerRef.current - 1;
+              if (timerRef.current < 1) {
+                timerRef.current = 15;
+                clearInterval(timeout);
+                send(
+                  WSMessage(
+                    GameAction.Opponent_Inactive,
+                    "Opponent is inactive."
+                  )
+                );
+              }
+            }, 1000);
+            break;
+          }
+          case GameAction.Opponent_Rejoin: {
+            if (timeout) {
+              timerRef.current = 15;
+              clearInterval(timeout);
+            }
             break;
           }
         }
-      } catch (e) {
-        console.error(e);
       }
-    };
-
-    ws.onclose = (e) => {
-      console.log("Closed");
-    };
-  }
+    }
+  }, [val]);
 
   function makeAMove(move) {
-    console.log(game.fen(), move, game.turn());
-    const gameCopy = new Chess(game.fen());
-    const result = gameCopy.move(move);
-    gameCopy._history = [... game._history, ...gameCopy._history]
-    setGame(gameCopy);
-    return result; // null if the move was illegal, the move object if the move was legal
+    if (!start) {
+      return null;
+    }
+    try {
+      const gameCopy = new Chess(game.fen());
+      const result = gameCopy.move(move);
+      gameCopy._history = [...game._history, ...gameCopy._history];
+      setGame(gameCopy);
+      if (gameCopy.isGameOver()) {
+        if (props.setting.multiplayer_playas != gameCopy.turn()) {
+          let action = "",
+            message = "";
+          if (gameCopy.isCheckmate()) {
+            action = GameAction.Is_CheckMate;
+            message = "Checkmate";
+          } else if (gameCopy.isStalemate()) {
+            action = GameAction.Is_StaleMate;
+            message = "Stalemate";
+          } else if (gameCopy.isInsufficientMaterial()) {
+            action = GameAction.Is_InsufficientMaterial;
+            message = "Insufficient Material";
+          } else if (gameCopy.isThreefoldRepetition()) {
+            action = GameAction.Is_ThreeFold;
+            message = "Threefold repetition";
+          } else if (gameCopy.isDraw()) {
+            action = GameAction.Is_Draw;
+            message = "Draw";
+          } else {
+            action = GameAction.Is_Draw;
+            message = "Draw";
+          }
+          send(
+            WSMessage(GameAction.Move, message, {
+              move: move,
+              token: props.setting.multiplayertoken,
+              id: props.user.id,
+            })
+          );
+        }
+        return null;
+      }
+      return result; // null if the move was illegal, the move object if the move was legal
+    } catch (e) {
+      return null;
+    }
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    if (game.isThreefoldRepetition()) {
-      alert('Three Fold repetation.')
-    }
     if (props.setting.multiplayer_playas == game.turn()) {
       const move = makeAMove({
         from: sourceSquare,
@@ -89,7 +231,7 @@ function MultiPlayer(props) {
       });
       // illegal move
       if (move === null) return false;
-      ws.send(
+      send(
         WSMessage(GameAction.Move, "Move", {
           move: {
             from: sourceSquare,
@@ -106,9 +248,32 @@ function MultiPlayer(props) {
     }
   }
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    handleCancelSearch();
+    setOpen(false);
+  };
+
   return (
-    <Grid justifyContent={"center"} container>
-      <Grid className="login-chessboard" item lg={6} md={8} xs={12}>
+    <Grid justifyContent={"space-around"} container className="container-main">
+      <CustomSnackbar ref={messageRef} />
+      <Grid className="multiplayer-chessboard" item lg={6} md={8} xs={12}>
+        <Dialog open={open}>
+          <DialogTitle>{endCondition}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              Let Google help apps determine location. This means sending
+              anonymous location data to Google, even when no apps are running.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Disagree</Button>
+            <Button onClick={handleClose}>Agree</Button>
+          </DialogActions>
+        </Dialog>
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={loading}
@@ -116,11 +281,27 @@ function MultiPlayer(props) {
           <CircularProgressBar color="inherit" />
           <Typography>Searching for opponent.</Typography>
         </Backdrop>
+        {opponentLeft &&
+          `Opponent left game will abort in ${timerRef.current} seconds if they dont rejoin.`}
         <Chessboard
           position={game.fen()}
           onPieceDrop={onDrop}
           id="BasicBoard"
+          boardOrientation={
+            props.setting.multiplayer_playas == "b" ? "black" : "white"
+          }
         />
+      </Grid>
+      <Grid item lg={4} md={12} xs={12}>
+        <div className="container">
+          {start ? (
+            <GameSideoption />
+          ) : search ? (
+            <SearchSideoption />
+          ) : (
+            <Sideoption />
+          )}
+        </div>
       </Grid>
     </Grid>
   );

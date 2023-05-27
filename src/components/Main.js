@@ -1,18 +1,26 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./../index.css";
-import Home from "./Home/Home";
-import Forgetpassword from "./Prelogin/Forgetpassword/Forgetpassword";
-import Register from "./Prelogin/Register/Register";
-import UserRegistration from "./Prelogin/UserRegistration/UserRegistration";
-import UserRegistrationSuccess from "./Prelogin/UserRegistration/UserRegistrationSuccess";
+
 import SecureRoute from "./SecureRoute";
-import Settings from "./PostLoggedin/GameSettings/Settings";
-import MainHeader from "./Headers/MainHeader";
 import DefaultRoute from "./DefaultRoute";
-import Game from "./PostLoggedin/NewGame/Game";
-import Statistics from "./PostLoggedin/Statistics/Statistics";
+import { CircularProgress } from "@mui/material";
+import Loader from "./Common/Loader";
+const Home = lazy(() => import("./Home/Home"));
+const Forgetpassword = lazy(() =>
+  import("./Prelogin/Forgetpassword/Forgetpassword")
+);
+const Register = lazy(() => import("./Prelogin/Register/Register"));
+const UserRegistration = lazy(() =>
+  import("./Prelogin/UserRegistration/UserRegistration")
+);
+const UserRegistrationSuccess = lazy(() =>
+  import("./Prelogin/UserRegistration/UserRegistrationSuccess")
+);
+const Settings = lazy(() => import("./PostLoggedin/GameSettings/Settings"));
+const Game = lazy(() => import("./PostLoggedin/NewGame/Game"));
+const Statistics = lazy(() => import("./PostLoggedin/Statistics/Statistics"));
 
 const router = createBrowserRouter([
   {
@@ -25,34 +33,34 @@ const router = createBrowserRouter([
   },
   {
     path: "/register",
-    element: <DefaultRoute Component={Register} />
+    element: <DefaultRoute Component={Register} />,
   },
   {
     path: "/userregistration/:token",
-    element: <DefaultRoute Component={UserRegistration} />
+    element: <DefaultRoute Component={UserRegistration} />,
   },
   {
     path: "/userregistrationsuccess/:success",
-    element: <DefaultRoute Component={UserRegistrationSuccess} />
+    element: <DefaultRoute Component={UserRegistrationSuccess} />,
   },
   {
     path: "/setting",
-    element: <SecureRoute Component={Settings} />
+    element: <SecureRoute Component={Settings} />,
   },
   {
     path: "/game",
-    element: <SecureRoute Component={Game} />
+    element: <SecureRoute Component={Game} />,
   },
   {
     path: "/stats",
-    element: <SecureRoute Component={Statistics} />
+    element: <SecureRoute Component={Statistics} />,
   },
 ]);
 
 export default function () {
   return (
-    <React.StrictMode>
+    <Suspense fallback={<Loader loading />}>
       <RouterProvider router={router} />
-    </React.StrictMode>
+    </Suspense>
   );
 }
