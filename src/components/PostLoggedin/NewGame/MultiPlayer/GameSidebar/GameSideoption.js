@@ -45,7 +45,7 @@ function a11yProps(index) {
   };
 }
 
-export default function GameSideoption() {
+export default function GameSideoption(props) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -86,7 +86,7 @@ export default function GameSideoption() {
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
-          <Itemone />
+          <Itemone {...props} />
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Itemtwo />

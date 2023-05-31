@@ -34,6 +34,7 @@ function MultiPlayer(props) {
   const [open, setOpen] = useState(false);
   const [start, setStart] = useState(false);
   const [opponentLeft, setOpponentLeft] = useState(false);
+  const [drawOffered, setDrawOffered] = useState(false);
 
   const messageRef = useRef("");
   const timerRef = useRef(15);
@@ -169,6 +170,17 @@ function MultiPlayer(props) {
             }
             break;
           }
+          case GameAction.Draw_Offered: {
+            setDrawOffered(true);
+            break;
+          }
+          case GameAction.Draw_Accepted: {
+            break;
+          }
+          case GameAction.Draw_Rejected: {
+            setDrawOffered(false);
+            break;
+          }
         }
       }
     }
@@ -185,6 +197,7 @@ function MultiPlayer(props) {
       setGame(gameCopy);
       if (gameCopy.isGameOver()) {
         if (props.setting.multiplayer_playas != gameCopy.turn()) {
+          /*****************Not required will be removed in the future*****************/
           let action = "",
             message = "";
           if (gameCopy.isCheckmate()) {
@@ -254,6 +267,7 @@ function MultiPlayer(props) {
 
   const handleClose = () => {
     handleCancelSearch();
+    setDrawOffered(false)
     setOpen(false);
   };
 
@@ -295,7 +309,7 @@ function MultiPlayer(props) {
       <Grid item lg={4} md={12} xs={12}>
         <div className="container">
           {start ? (
-            <GameSideoption />
+            <GameSideoption drawOffered={drawOffered} />
           ) : search ? (
             <SearchSideoption />
           ) : (
