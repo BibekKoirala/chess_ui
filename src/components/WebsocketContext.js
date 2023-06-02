@@ -33,6 +33,7 @@ export const WebsocketProvider = connect(mapStateToProps)(
               payload: {
                 token: props.user.token,
                 id: props.user.id,
+                username: props.user.username
               },
             })
           );

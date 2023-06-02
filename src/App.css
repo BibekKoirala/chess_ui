@@ -153,3 +153,7 @@ a {
     padding: 20px !important;
   }
 }
+
+.btn-draw {
+  width: 30% !important;
+}
