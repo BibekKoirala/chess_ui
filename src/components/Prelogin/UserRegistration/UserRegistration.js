@@ -73,7 +73,7 @@ export default function UserRegistration() {
             navigate('/userregistrationsuccess/false'); 
           }
       })
-      console.log("UseEffect is called i times")
+      // console.log("UseEffect is called i times")
     }, [])
 
     const handleClose = (event, reason) => {
