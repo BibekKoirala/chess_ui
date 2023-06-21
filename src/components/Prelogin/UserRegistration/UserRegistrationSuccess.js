@@ -17,6 +17,7 @@ function UserRegistrationSuccess(props) {
     },[])
     console.log(params.success)
   return (
+    <>
     <div>
       <Grid justifyContent={'center'} container spacing={2}>
         <Grid style={{textAlign: 'center', padding: 50}} item lg={6} md={6} sm={12} xs={12}>
@@ -30,6 +31,7 @@ function UserRegistrationSuccess(props) {
         </Grid>
       </Grid>
     </div>
+    </>
   )
 }
 
