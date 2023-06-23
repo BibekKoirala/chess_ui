@@ -39,7 +39,7 @@ function Game(props) {
   }
 
   return (
-    props.setting.against == 1?<SinglePlayer />:<MultiPlayer />
+    props.setting.against == 0?<SinglePlayer />:<MultiPlayer />
   );
 }
 

@@ -1,9 +1,9 @@
 import { Remove_Settings, Set_Multiplayer, Set_Settings } from "../Action/SettingsAction"
 
 const initialState = {
-    against: 1,
-    time: 10,
-    difficulty: 1,
+    against: 0,
+    time: 0,
+    difficulty: 0,
     playas: 'a',
     multiplayertoken: null,
     multiplayer_playas: "a"

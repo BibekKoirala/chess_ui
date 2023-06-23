@@ -10,7 +10,7 @@ function Itemone(props) {
     send(
       JSON.stringify({
         action: "Cancel_Search",
-        payload: { id: props.user.id },
+        payload: { id: props.user.id, format: props.setting.time },
       })
     );
   };

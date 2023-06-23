@@ -49,6 +49,12 @@ export const WebsocketProvider = connect(mapStateToProps)(
               NotificationTypeEnum.Error
             );
           }
+          let msg = JSON.parse(event.data);
+          if(GameAction.Expired_Token == msg.action) {
+            if (document.getElementById("logout")) {
+              document.getElementById("logout").click();
+            }            
+          }
         };
 
         ws.current = socket;
