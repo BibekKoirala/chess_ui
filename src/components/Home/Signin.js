@@ -78,6 +78,7 @@ function SignIn(props) {
               "chess_userinfo",
               JSON.stringify(res.data.data)
             );
+            localStorage.setItem("ch_token", res.data.data.token)
             navigate("/setting");
             messageRef.current.showMessage(
               res.data.message,

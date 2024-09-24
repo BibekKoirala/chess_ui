@@ -48,8 +48,21 @@ a {
 .settingoptions {
   border-radius: 4px;
   margin-right: 20px !important;
-  border: 5px solid;
-  color: beige;
+  border: 1px solid;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+}
+
+.timesetting {
+  display: flex;
+  margin-top: 10px !important;
+  align-items: center;
+  justify-content: center;
+  padding-block: 5px;
+}
+
+.timesetting > span {
+  align-items: center;
 }
 
 .settingSave {
@@ -156,4 +169,23 @@ a {
 
 .btn-draw {
   width: 30% !important;
+}
+
+.gameHistoryItem {
+  display: flex;
+  align-items: center;
+}
+
+.gameHistoryUsername {
+  padding-left: 15px;
+}
+
+.game-clock {
+  font-size: 26px;
+  font-weight:900;
+  padding-inline: 20px;
+}
+
+.game-clock-container {
+  float: right;
 }

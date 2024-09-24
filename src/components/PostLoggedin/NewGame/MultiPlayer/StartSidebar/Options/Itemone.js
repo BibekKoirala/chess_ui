@@ -14,6 +14,7 @@ function Itemone(props) {
           token: props.user.token,
           id: props.user.id,
           username: props.user.username,
+          format: props.setting.time
         },
       })
     );

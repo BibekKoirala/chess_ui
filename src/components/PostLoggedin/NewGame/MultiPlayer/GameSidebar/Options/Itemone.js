@@ -25,6 +25,7 @@ function Itemone(props) {
           token: props.user.token,
           id: props.user.id,
           username: props.user.username,
+          format: props.setting.time
         },
       })
     );
@@ -46,6 +47,7 @@ function Itemone(props) {
           token: props.user.token,
           id: props.user.id,
           username: props.user.username,
+          format: props.setting.time
         },
       })
     );
@@ -60,10 +62,22 @@ function Itemone(props) {
           token: props.user.token,
           id: props.user.id,
           username: props.user.username,
+          format: props.setting.time
         },
       })
     );
     setDrawOffered(false);
+  }
+
+  const handleResign = () => {
+    send(
+      JSON.stringify({
+        action: GameAction.Game_Resign,
+        payload: {
+          format: props.setting.time
+        },
+      })
+    )
   }
 
   const handleAccept = () => {
@@ -74,6 +88,7 @@ function Itemone(props) {
           token: props.user.token,
           id: props.user.id,
           username: props.user.username,
+          format: props.setting.time
         },
       })
     );
@@ -113,7 +128,7 @@ function Itemone(props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>No</Button>
-          <Button onClick={handleClose}>Yes</Button>
+          <Button onClick={handleResign}>Yes</Button>
         </DialogActions>
       </Dialog>
       <Button

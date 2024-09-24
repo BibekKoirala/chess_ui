@@ -215,6 +215,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   logout: () => {
+    localStorage.removeItem('ch_token');
+    localStorage.removeItem('chess_userinfo')
     dispatch(removeUserInfo());
     dispatch(removeUserSetting());
   },

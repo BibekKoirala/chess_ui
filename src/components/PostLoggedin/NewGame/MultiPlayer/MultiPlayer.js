@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { Chessboard } from "react-chessboard";
 import {
+  Avatar,
   Backdrop,
   Button,
   Dialog,
@@ -9,6 +10,7 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  Paper,
   Typography,
 } from "@mui/material";
 import { Chess } from "chess.js";
@@ -35,6 +37,13 @@ function MultiPlayer(props) {
   const [start, setStart] = useState(false);
   const [opponentLeft, setOpponentLeft] = useState(false);
   const [drawOffered, setDrawOffered] = useState(false);
+  const [gameHistory, setGameHistory] = useState(false);
+  const [historyGame, setHistoryGame] = useState(new Chess());
+  const [historyas, setHistoryAs] = useState('w');
+  const [myinfo, setMyInfo] = useState({});
+  const [opponentInfo, setOpponentInfo] = useState({});
+  const [myClock, setMyClock] = useState(0);
+  const [opponentClock, setOpponentClock] = useState(0);
 
   const messageRef = useRef("");
   const timerRef = useRef(15);
@@ -50,6 +59,7 @@ function MultiPlayer(props) {
   const handleStart = () => {
     setSearch(false);
     setStart(true);
+    setGameHistory(false);
   };
 
   const handleSearch = () => {
@@ -68,6 +78,7 @@ function MultiPlayer(props) {
         WSMessage(GameAction.Rejoin, "Rejoin", {
           token: props.setting.multiplayertoken,
           id: props.user.id,
+          format: props.setting.time
         })
       );
     }
@@ -156,7 +167,10 @@ function MultiPlayer(props) {
                 send(
                   WSMessage(
                     GameAction.Opponent_Inactive,
-                    "Opponent is inactive."
+                    "Opponent is inactive.",
+                    {
+                      format: props.setting.time
+                    }
                   )
                 );
               }
@@ -180,6 +194,10 @@ function MultiPlayer(props) {
           case GameAction.Draw_Rejected: {
             setDrawOffered(false);
             break;
+          }
+          case GameAction.Game_Clock: {
+            setMyClock(message.payload.ownclock)
+            setOpponentClock(message.payload.opponentclock)
           }
         }
       }
@@ -224,6 +242,7 @@ function MultiPlayer(props) {
               move: move,
               token: props.setting.multiplayertoken,
               id: props.user.id,
+              format: props.setting.time
             })
           );
         }
@@ -253,6 +272,7 @@ function MultiPlayer(props) {
           },
           token: props.setting.multiplayertoken,
           id: props.user.id,
+          format: props.setting.time
         })
       );
       return true;
@@ -270,6 +290,50 @@ function MultiPlayer(props) {
     setDrawOffered(false)
     setOpen(false);
   };
+
+  const handleGameHistory = (games, as, gm) => {
+    setGameHistory(true);
+    let newGame = new Chess(games.finalPosition);
+    newGame._history = games.history;
+    setHistoryGame(newGame)
+    setHistoryAs(as?'white': 'black');
+    let message = ''
+    if (gm.draw) {
+      switch (gm.concludeby) {
+        case GameAction.Is_StaleMate:{
+        message = "Game drawn by stalemate.";
+        break;
+      } case GameAction.Is_InsufficientMaterial:{
+        message = "Game drawn by insufficient material.";
+        break;
+      } case GameAction.Is_ThreeFold:{
+        message = "Game drawn by threefold repetition";
+        break;
+      } case GameAction.Is_Draw:{
+        message = "Game drawn";
+        break
+      } default: {
+        message = "Game drawn";
+        break;
+      }
+      }
+    }
+    else if (gm.winner) {
+      message = "You won."
+    }
+    else {
+      message = "You lost."
+    }
+    setEndCondition(message);
+
+    setOpen(true);
+  }
+
+  const timeFormatter = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time - minutes * 60;
+    return `${minutes<10?`0${minutes}`:minutes}:${seconds<10?`0${seconds}`:seconds}`
+  }
 
   return (
     <Grid justifyContent={"space-around"} container className="container-main">
@@ -295,16 +359,61 @@ function MultiPlayer(props) {
           <CircularProgressBar color="inherit" />
           <Typography>Searching for opponent.</Typography>
         </Backdrop>
+
+        <Grid style={{width: '100%',}} container justifyContent={'space-between'}>
+          <Grid  item style={{display: 'flex', flexDirection: 'row'}}>
+        <Avatar
+              variant="square"
+                alt={opponentInfo.username || "Opponent"}
+                src="/static/images/avatar/1.jpg"
+              />
+              <Typography className="gameHistoryUsername">{opponentInfo.username || "Opponent"}</Typography>
+              </Grid>
+              <Grid className="game-clock-container">
+              <Paper className="game-clock game-clock-opponent">
+                {timeFormatter(opponentClock)}
+                </Paper>
+              </Grid>
+        </Grid>
         {opponentLeft &&
           `Opponent left game will abort in ${timerRef.current} seconds if they dont rejoin.`}
-        <Chessboard
+        {
+          gameHistory?
+          <Chessboard
+          style={{float: 'right'}}
+          position={historyGame.fen()}
+          onPieceDrop={onDrop}
+          id="BasicBoard"
+          boardOrientation={
+            historyGame
+          }
+        />
+          :
+          <Chessboard
+          style={{float: 'right'}}
+
           position={game.fen()}
           onPieceDrop={onDrop}
           id="BasicBoard"
           boardOrientation={
             props.setting.multiplayer_playas == "b" ? "black" : "white"
           }
-        />
+        />}
+        <Grid style={{width: '100%',}} container justifyContent={'space-between'}>
+          <Grid  item style={{display: 'flex', flexDirection: 'row'}}>
+        <Avatar
+              variant="square"
+                alt={props.user.username || "Opponent"}
+                src="/static/images/avatar/1.jpg"
+              />
+              <Typography className="gameHistoryUsername">{props.user.username || "Opponent"}</Typography>
+              </Grid>
+              <Grid className="game-clock-container">
+                <Paper className="game-clock game-clock-own">
+                {timeFormatter(myClock)}
+                </Paper>
+              </Grid>
+        </Grid>
       </Grid>
       <Grid item lg={4} md={12} xs={12}>
         <div className="container">
@@ -313,7 +422,7 @@ function MultiPlayer(props) {
           ) : search ? (
             <SearchSideoption />
           ) : (
-            <Sideoption />
+            <Sideoption handleGameHistory={handleGameHistory} />
           )}
         </div>
       </Grid>
