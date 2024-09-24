@@ -3,8 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -18,10 +16,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import CommonRegex from "../../../Common/CommonRegex";
 import { NotificationTypeEnum } from "../../../Common/CommonEnum";
-import { Snackbar, Alert, Paper } from "@mui/material";
+import { Backdrop, CircularProgress, Paper } from "@mui/material";
 import RequestHelper from "../../../Common/RequestHelper";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgressBar from "@mui/material/CircularProgress";
 import { useRef } from "react";
 import CustomSnackbar from "../../Common/Snackbar";
 
@@ -42,10 +38,14 @@ export default function Register() {
 
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [dob, setDOB] = React.useState(dayjs(maxDate()));
 
   const [usernameError, setUsernameError] = React.useState(false);
   const [emailError, setEmailError] = React.useState(false);
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
   const [dobError, setDOBError] = React.useState(false);
 
   const [loading, setLoading] = React.useState(false);
@@ -53,8 +53,10 @@ export default function Register() {
 
   const handleSubmit = () => {
     setLoading(true);
-    let noOfEmptyFields = [username, email, dob].filter((e) => e === "");
-    if (noOfEmptyFields.length > 1) {
+    let noOfEmptyFields = [username, email, password, confirmPassword, dob].filter(
+      (e) => e === ""
+    );
+    if (noOfEmptyFields.length > 0) {
       setLoading(false);
       messageRef.current.showMessage(
         "All fields are required!",
@@ -64,21 +66,35 @@ export default function Register() {
     } else if (usernameError || !username) {
       setLoading(false);
       messageRef.current.showMessage(
-        "Please provide valid username",
+        "Please provide a valid username",
         NotificationTypeEnum.Error
       );
       return;
     } else if (emailError || !email) {
       setLoading(false);
       messageRef.current.showMessage(
-        "Please provide valid email",
+        "Please provide a valid email",
+        NotificationTypeEnum.Error
+      );
+      return;
+    } else if (passwordError || !password) {
+      setLoading(false);
+      messageRef.current.showMessage(
+        "Please provide a valid password",
+        NotificationTypeEnum.Error
+      );
+      return;
+    } else if (confirmPasswordError || confirmPassword !== password) {
+      setLoading(false);
+      messageRef.current.showMessage(
+        "Passwords do not match",
         NotificationTypeEnum.Error
       );
       return;
     } else if (dobError || !dob) {
       setLoading(false);
       messageRef.current.showMessage(
-        "Please provide valid date of birth",
+        "Please provide a valid date of birth",
         NotificationTypeEnum.Error
       );
       return;
@@ -89,6 +105,7 @@ export default function Register() {
       {
         email: email,
         username: username,
+        password: password,
         birthdate: dob.$d,
       },
       (res, success) => {
@@ -99,6 +116,13 @@ export default function Register() {
               res.data.message,
               NotificationTypeEnum.Success
             );
+
+            setUsername("")
+            setConfirmPassword("")
+            setPassword("")
+            setEmail("")
+            setDOB(dayjs(maxDate()))
+
           } else if (res.data) {
             messageRef.current.showMessage(
               res.data.message,
@@ -138,15 +162,20 @@ export default function Register() {
         setEmailError(false);
       }
       setEmail(event.target.value);
-    } else if (event.target.name === "dob") {
-      if (event.target.value < minDate) {
-        setDOBError(true);
-      } else if (event.target.value > maxDate) {
-        setDOBError(true);
+    } else if (event.target.name === "password") {
+      if (event.target.value.length < 6) {
+        setPasswordError(true);
+      } else {
+        setPasswordError(false);
       }
-      setEmail(event.target.value);
-    } else {
-      return;
+      setPassword(event.target.value);
+    } else if (event.target.name === "confirmPassword") {
+      if (event.target.value !== password) {
+        setConfirmPasswordError(true);
+      } else {
+        setConfirmPasswordError(false);
+      }
+      setConfirmPassword(event.target.value);
     }
   };
 
@@ -159,7 +188,7 @@ export default function Register() {
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={loading}
         >
-          <CircularProgressBar color="inherit" />
+          <CircularProgress color="inherit" />
         </Backdrop>
         <Paper
           style={{
@@ -210,6 +239,33 @@ export default function Register() {
                 autoComplete="email"
                 onChange={handleChange}
               />
+              <TextField
+                value={password}
+                error={passwordError}
+                className="form-input"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={handleChange}
+              />
+              <TextField
+                value={confirmPassword}
+                error={confirmPasswordError}
+                className="form-input"
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                onChange={handleChange}
+              />
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   className="register-datepicker form-input"
@@ -238,11 +294,6 @@ export default function Register() {
                     Login
                   </Link>
                 </Grid>
-                {/* <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid> */}
               </Grid>
             </Box>
           </Box>
