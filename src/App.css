@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 .App {
   color: antiquewhite !important;
 }
@@ -30,12 +32,8 @@ a {
 
 .form-input {
   border-color: antiquewhite !important;
-  color: antiquewhite !important;
+  /* color: antiquewhite !important; */
   margin-block: 20px !important;
-}
-
-.form-input input {
-  color: whitesmoke !important;
 }
 
 .settingPaper {
@@ -178,6 +176,7 @@ a {
 
 .gameHistoryUsername {
   padding-left: 15px;
+  color: darkblue;
 }
 
 .game-clock {
@@ -188,4 +187,148 @@ a {
 
 .game-clock-container {
   float: right;
+}
+
+.container2 {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: 30px;
+  width: 100%;
+  position: relative;
+}
+
+.settingoptions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border: 2px solid;
+  border-radius: 10px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background-color: gray;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.divider span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 0 5px;
+  font-weight: bold;
+}
+
+
+.timeoptions {
+  margin: 10px;
+  border: 2px solid;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.timesetting {
+  text-align: center;
+  cursor: pointer;
+}
+
+img {
+  height: 40px;
+}
+
+/* Professional color palette */
+.timeoptions:hover {
+  background-color: #ff00ff; /* Light blue hover effect */
+}
+
+.play-text {
+  font-family: 'Press Start 2P', cursive; /* Game-like retro font */
+  font-weight: bold;
+  font-size: 24px; /* Adjust font size */
+  text-align: center;
+  display: block; /* Ensure it behaves as a block element */
+  width: 100%; /* Center it horizontally */
+  margin: 20px 0; /* Optional: Adds space around the text */
+  color: #007BFF; /* Optional: Set color */
+}
+
+.difficultyoptions {
+  margin-top: 10px !important;
+  border: 2px solid;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.difficultyoptions:hover {
+  background-color: #f0f8ff; /* Light blue hover effect */
+}
+
+
+/* Itemone.css */
+
+.action-buttons {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  align-items: center; /* Center buttons horizontally */
+  justify-content: center; /* Center buttons vertically */
+  gap: 10px; /* Space between buttons */
+}
+
+.action-button {
+  padding: 15px 20px; /* Padding for buttons */
+  font-size: 16px; /* Font size */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  width: 100%; /* Set a fixed width */
+  transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.resign {
+  background-color: #ff6b6b; /* Red color for resign */
+  color: white; /* White text */
+}
+
+.resign:hover {
+  background-color: #ff4d4d; /* Darker red on hover */
+}
+
+.draw-offer-container {
+  margin-top: 20px; /* Add space above draw offer text */
+  text-align: center; /* Center text */
+}
+
+.btn-draw {
+  background-color: #6bcf6b; /* Green color for draw offer buttons */
+  color: white; /* White text */
+}
+
+.btn-draw:hover {
+  background-color: #4db34d; /* Darker green on hover */
 }

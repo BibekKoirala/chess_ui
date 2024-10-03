@@ -33,13 +33,14 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <a color="inherit" href="/">
-        Your Website
+        Bibek Koirala
       </a>{" "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
   );
 }
+
 
 function App() {
   return (

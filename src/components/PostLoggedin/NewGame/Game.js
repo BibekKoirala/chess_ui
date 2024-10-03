@@ -5,6 +5,7 @@ import { Chess } from 'chess.js';
 import { connect } from "react-redux";
 import SinglePlayer from "./SinglePlayer/SinglePlayer";
 import MultiPlayer from "./MultiPlayer/MultiPlayer";
+import CustomSidebar from "./CommonSidebar/CustomSidebar";
 
 function Game(props) {
     const [game, setGame] = useState(new Chess());
@@ -39,12 +40,25 @@ function Game(props) {
   }
 
   return (
-    props.setting.against == 0?<SinglePlayer />:<MultiPlayer />
+    
+
+    <Grid justifyContent={"space-around"} container className="container-main">
+      <Grid item lg={6} md={12} xs={12}>
+      
+      {props.setting.against == 0?<SinglePlayer />:<MultiPlayer />}
+      </Grid>
+      <Grid item lg={4} md={12} xs={12}>
+        <div className="container">
+          <CustomSidebar {...props}/>
+        </div>
+      </Grid>
+    </Grid>
   );
 }
 
 const mapStateToProps = (state) => ({
-  setting: state.setting
+  setting: state.setting,
+  game: state.game
 })
 
 const mapDispatchToProps = (dispatch) => ({

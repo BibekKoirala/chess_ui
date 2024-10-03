@@ -194,7 +194,7 @@ export default function Register() {
           style={{
             padding: 20,
             marginTop: "30%",
-            backgroundColor: "hsl(120, 10%, 90%, 0.3)",
+            backgroundColor: "hsl(120, 10%, 90%, 0.9)",
           }}
         >
           <Box
@@ -216,7 +216,6 @@ export default function Register() {
                 value={username}
                 error={usernameError}
                 className="form-input"
-                color={"secondary"}
                 margin="normal"
                 required
                 fullWidth

@@ -48,6 +48,25 @@ function MultiPlayer(props) {
   const messageRef = useRef("");
   const timerRef = useRef(15);
 
+  useEffect(()=>{
+    if (props.setting.time == 0){
+      setMyClock(60)
+      setOpponentClock(60)
+    }
+    else if (props.setting.time == 1){
+      setMyClock(180)
+      setOpponentClock(180)
+    }
+    else if (props.setting.time == 2){
+      setMyClock(600)
+      setOpponentClock(600)
+    }
+    else {
+      setMyClock(3600)
+      setOpponentClock(3600)
+    }
+  }, [props.setting.time])
+
   const WSMessage = (action, message, payload) => {
     return payload
       ? JSON.stringify({ action: action, message: message, payload: payload })
@@ -336,9 +355,9 @@ function MultiPlayer(props) {
   }
 
   return (
-    <Grid justifyContent={"space-around"} container className="container-main">
+      <Grid className="multiplayer-chessboard" >
       <CustomSnackbar ref={messageRef} />
-      <Grid className="multiplayer-chessboard" item lg={6} md={8} xs={12}>
+
         <Dialog open={open}>
           <DialogTitle>{endCondition}</DialogTitle>
           <DialogContent>
@@ -364,7 +383,7 @@ function MultiPlayer(props) {
           <Grid  item style={{display: 'flex', flexDirection: 'row'}}>
         <Avatar
               variant="square"
-                alt={opponentInfo.username || "Opponent"}
+                alt={opponentInfo?.username?.toUpperCase() || "Opponent"}
                 src="/static/images/avatar/1.jpg"
               />
               <Typography className="gameHistoryUsername">{opponentInfo.username || "Opponent"}</Typography>
@@ -403,7 +422,7 @@ function MultiPlayer(props) {
           <Grid  item style={{display: 'flex', flexDirection: 'row'}}>
         <Avatar
               variant="square"
-                alt={props.user.username || "Opponent"}
+                alt={props.user.username.toUpperCase() || "Opponent"}
                 src="/static/images/avatar/1.jpg"
               />
               <Typography className="gameHistoryUsername">{props.user.username || "Opponent"}</Typography>
@@ -415,18 +434,6 @@ function MultiPlayer(props) {
               </Grid>
         </Grid>
       </Grid>
-      <Grid item lg={4} md={12} xs={12}>
-        <div className="container">
-          {start ? (
-            <GameSideoption drawOffered={drawOffered} />
-          ) : search ? (
-            <SearchSideoption />
-          ) : (
-            <Sideoption handleGameHistory={handleGameHistory} />
-          )}
-        </div>
-      </Grid>
-    </Grid>
   );
 }
 

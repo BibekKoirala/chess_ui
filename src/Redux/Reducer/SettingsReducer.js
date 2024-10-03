@@ -4,20 +4,16 @@ const initialState = {
     against: 0,
     time: 0,
     difficulty: 0,
-    playas: 'a',
-    multiplayertoken: null,
-    multiplayer_playas: "a"
+    playas: 'w',
 }
 
 export const settingReducer = (state= initialState, action) => {
     switch (action.type) {
         case Set_Settings: {
+            console.log(state)
             return {
                 ...state,
-                against: action.payload.against,
-                time: action.payload.time,
-                difficulty: action.payload.difficulty,
-                playas: action.payload.playas,
+                ...action.payload
             }
         }
         case Remove_Settings: {

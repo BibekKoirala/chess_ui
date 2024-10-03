@@ -79,7 +79,7 @@ function SignIn(props) {
               JSON.stringify(res.data.data)
             );
             localStorage.setItem("ch_token", res.data.data.token)
-            navigate("/setting");
+            navigate("/game");
             messageRef.current.showMessage(
               res.data.message,
               NotificationTypeEnum.Success
@@ -121,7 +121,7 @@ function SignIn(props) {
     } else if (event.target.name === "password") {
       if (event.target.value.length === 0) {
         setPasswordError(false);
-      } else if (!CommonRegex.passwordReGex.test(event.target.value)) {
+      } else if (!CommonRegex.passwordReGex.test(event.target.value) && false) {
         setPasswordError(true);
       } else {
         setPasswordError(false);
@@ -147,7 +147,7 @@ function SignIn(props) {
           style={{
             padding: 20,
             marginTop: "30%",
-            backgroundColor: "hsl(120, 10%, 90%, 0.3)",
+            backgroundColor: "hsl(120, 10%, 90%, 0.8)",
           }}
         >
           <Box

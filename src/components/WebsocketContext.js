@@ -17,6 +17,7 @@ export const WebsocketContext = createContext(false, null, () => {});
 // the component tree than any consumers.
 export const WebsocketProvider = connect(mapStateToProps)(
   ({ children, ...props }) => {
+    console.log(props)
     const [isReady, setIsReady] = useState(false);
     const [val, setVal] = useState(null);
 
@@ -24,6 +25,7 @@ export const WebsocketProvider = connect(mapStateToProps)(
     const messageRef = useRef(null);
 
     useEffect(() => {
+      console.log(props)
       if (props.user.token) {
         const socket = new WebSocket(`${BaseUrl.replace("http", "ws")}`);
         socket.onopen = () => {

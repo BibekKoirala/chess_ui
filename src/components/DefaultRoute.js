@@ -9,7 +9,7 @@ function DefaultRoute(props) {
     <>
     <MainHeader />
     {
-        !props.user.token? <Component />: <Navigate to={"/setting"} replace />
+        !props.user.token? <Component />: <Navigate to={"/game"} replace />
     }
     </>
   )
