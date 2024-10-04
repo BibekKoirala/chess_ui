@@ -27,6 +27,7 @@ import Sideoption from "./StartSidebar/Sideoption";
 import GameSideoption from "./GameSidebar/GameSideoption";
 import SearchSideoption from "./SearchSidebar/SearchSideoption";
 import CustomSnackbar from "../../../Common/Snackbar";
+import { setGameOnGoing, setGameOver } from "../../../../Redux/Action/GameAction";
 
 function MultiPlayer(props) {
   const [game, setGame] = useState(new Chess());
@@ -39,7 +40,7 @@ function MultiPlayer(props) {
   const [drawOffered, setDrawOffered] = useState(false);
   const [gameHistory, setGameHistory] = useState(false);
   const [historyGame, setHistoryGame] = useState(new Chess());
-  const [historyas, setHistoryAs] = useState('w');
+  const [historyas, setHistoryAs] = useState("w");
   const [myinfo, setMyInfo] = useState({});
   const [opponentInfo, setOpponentInfo] = useState({});
   const [myClock, setMyClock] = useState(0);
@@ -48,24 +49,21 @@ function MultiPlayer(props) {
   const messageRef = useRef("");
   const timerRef = useRef(15);
 
-  useEffect(()=>{
-    if (props.setting.time == 0){
-      setMyClock(60)
-      setOpponentClock(60)
+  useEffect(() => {
+    if (props.setting.time == 0) {
+      setMyClock(60);
+      setOpponentClock(60);
+    } else if (props.setting.time == 1) {
+      setMyClock(180);
+      setOpponentClock(180);
+    } else if (props.setting.time == 2) {
+      setMyClock(600);
+      setOpponentClock(600);
+    } else {
+      setMyClock(3600);
+      setOpponentClock(3600);
     }
-    else if (props.setting.time == 1){
-      setMyClock(180)
-      setOpponentClock(180)
-    }
-    else if (props.setting.time == 2){
-      setMyClock(600)
-      setOpponentClock(600)
-    }
-    else {
-      setMyClock(3600)
-      setOpponentClock(3600)
-    }
-  }, [props.setting.time])
+  }, [props.setting.time]);
 
   const WSMessage = (action, message, payload) => {
     return payload
@@ -79,6 +77,7 @@ function MultiPlayer(props) {
     setSearch(false);
     setStart(true);
     setGameHistory(false);
+    
   };
 
   const handleSearch = () => {
@@ -97,7 +96,7 @@ function MultiPlayer(props) {
         WSMessage(GameAction.Rejoin, "Rejoin", {
           token: props.setting.multiplayertoken,
           id: props.user.id,
-          format: props.setting.time
+          format: props.setting.time,
         })
       );
     }
@@ -127,6 +126,7 @@ function MultiPlayer(props) {
           case GameAction.Game_Started: {
             setLoading(false);
             handleStart();
+            props.setGameStarted()
             props.setMultiplayer({
               multiplayertoken: message.payload.token,
               multiplayer_playas: message.payload.piece,
@@ -139,6 +139,7 @@ function MultiPlayer(props) {
             break;
           }
           case GameAction.Game_Over: {
+            props.setGameStarted()
             if (message.payload.draw) {
               try {
                 makeAMove(message.payload.move);
@@ -159,6 +160,7 @@ function MultiPlayer(props) {
             break;
           }
           case GameAction.Rejoin_Success: {
+            props.setGameStarted()
             let tempgame = new Chess(message.payload.fen);
             tempgame._history = message.payload.history;
             setGame(tempgame);
@@ -188,7 +190,7 @@ function MultiPlayer(props) {
                     GameAction.Opponent_Inactive,
                     "Opponent is inactive.",
                     {
-                      format: props.setting.time
+                      format: props.setting.time,
                     }
                   )
                 );
@@ -215,8 +217,8 @@ function MultiPlayer(props) {
             break;
           }
           case GameAction.Game_Clock: {
-            setMyClock(message.payload.ownclock)
-            setOpponentClock(message.payload.opponentclock)
+            setMyClock(message.payload.ownclock);
+            setOpponentClock(message.payload.opponentclock);
           }
         }
       }
@@ -261,7 +263,7 @@ function MultiPlayer(props) {
               move: move,
               token: props.setting.multiplayertoken,
               id: props.user.id,
-              format: props.setting.time
+              format: props.setting.time,
             })
           );
         }
@@ -291,7 +293,7 @@ function MultiPlayer(props) {
           },
           token: props.setting.multiplayertoken,
           id: props.user.id,
-          format: props.setting.time
+          format: props.setting.time,
         })
       );
       return true;
@@ -306,7 +308,7 @@ function MultiPlayer(props) {
 
   const handleClose = () => {
     handleCancelSearch();
-    setDrawOffered(false)
+    setDrawOffered(false);
     setOpen(false);
   };
 
@@ -314,126 +316,139 @@ function MultiPlayer(props) {
     setGameHistory(true);
     let newGame = new Chess(games.finalPosition);
     newGame._history = games.history;
-    setHistoryGame(newGame)
-    setHistoryAs(as?'white': 'black');
-    let message = ''
+    setHistoryGame(newGame);
+    setHistoryAs(as ? "white" : "black");
+    let message = "";
     if (gm.draw) {
       switch (gm.concludeby) {
-        case GameAction.Is_StaleMate:{
-        message = "Game drawn by stalemate.";
-        break;
-      } case GameAction.Is_InsufficientMaterial:{
-        message = "Game drawn by insufficient material.";
-        break;
-      } case GameAction.Is_ThreeFold:{
-        message = "Game drawn by threefold repetition";
-        break;
-      } case GameAction.Is_Draw:{
-        message = "Game drawn";
-        break
-      } default: {
-        message = "Game drawn";
-        break;
+        case GameAction.Is_StaleMate: {
+          message = "Game drawn by stalemate.";
+          break;
+        }
+        case GameAction.Is_InsufficientMaterial: {
+          message = "Game drawn by insufficient material.";
+          break;
+        }
+        case GameAction.Is_ThreeFold: {
+          message = "Game drawn by threefold repetition";
+          break;
+        }
+        case GameAction.Is_Draw: {
+          message = "Game drawn";
+          break;
+        }
+        default: {
+          message = "Game drawn";
+          break;
+        }
       }
-      }
-    }
-    else if (gm.winner) {
-      message = "You won."
-    }
-    else {
-      message = "You lost."
+    } else if (gm.winner) {
+      message = "You won.";
+    } else {
+      message = "You lost.";
     }
     setEndCondition(message);
 
     setOpen(true);
-  }
+  };
 
   const timeFormatter = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = time - minutes * 60;
-    return `${minutes<10?`0${minutes}`:minutes}:${seconds<10?`0${seconds}`:seconds}`
-  }
+    return `${minutes < 10 ? `0${minutes}` : minutes}:${
+      seconds < 10 ? `0${seconds}` : seconds
+    }`;
+  };
 
   return (
-      <Grid className="multiplayer-chessboard" >
+    <Grid className="multiplayer-chessboard">
       <CustomSnackbar ref={messageRef} />
 
-        <Dialog open={open}>
-          <DialogTitle>{endCondition}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              Let Google help apps determine location. This means sending
-              anonymous location data to Google, even when no apps are running.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Disagree</Button>
-            <Button onClick={handleClose}>Agree</Button>
-          </DialogActions>
-        </Dialog>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={loading}
-        >
-          <CircularProgressBar color="inherit" />
-          <Typography>Searching for opponent.</Typography>
-        </Backdrop>
+      <Dialog open={open}>
+        <DialogTitle>{endCondition}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            Let Google help apps determine location. This means sending
+            anonymous location data to Google, even when no apps are running.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Disagree</Button>
+          <Button onClick={handleClose}>Agree</Button>
+        </DialogActions>
+      </Dialog>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgressBar color="inherit" />
+        <Typography>Searching for opponent.</Typography>
+      </Backdrop>
 
-        <Grid style={{width: '100%',}} container justifyContent={'space-between'}>
-          <Grid  item style={{display: 'flex', flexDirection: 'row'}}>
-        <Avatar
-              variant="square"
-                alt={opponentInfo?.username?.toUpperCase() || "Opponent"}
-                src="/static/images/avatar/1.jpg"
-              />
-              <Typography className="gameHistoryUsername">{opponentInfo.username || "Opponent"}</Typography>
-              </Grid>
-              <Grid className="game-clock-container">
-              <Paper className="game-clock game-clock-opponent">
-                {timeFormatter(opponentClock)}
-                </Paper>
-              </Grid>
+      <Grid
+        style={{ width: "100%" }}
+        container
+        justifyContent={"space-between"}
+      >
+        <Grid item style={{ display: "flex", flexDirection: "row" }}>
+          <Avatar
+            variant="square"
+            alt={opponentInfo?.username?.toUpperCase() || "Opponent"}
+            src="/static/images/avatar/1.jpg"
+          />
+          <Typography className="gameHistoryUsername">
+            {opponentInfo.username || "Opponent"}
+          </Typography>
         </Grid>
-        {opponentLeft &&
-          `Opponent left game will abort in ${timerRef.current} seconds if they dont rejoin.`}
-        {
-          gameHistory?
-          <Chessboard
-          style={{float: 'right'}}
+        <Grid className="game-clock-container">
+          <Paper className="game-clock game-clock-opponent">
+            {timeFormatter(opponentClock)}
+          </Paper>
+        </Grid>
+      </Grid>
+      {opponentLeft &&
+        `Opponent left game will abort in ${timerRef.current} seconds if they dont rejoin.`}
+      {gameHistory ? (
+        <Chessboard
+          style={{ float: "right" }}
           position={historyGame.fen()}
           onPieceDrop={onDrop}
           id="BasicBoard"
-          boardOrientation={
-            historyGame
-          }
+          boardOrientation={historyGame}
         />
-          :
-          <Chessboard
-          style={{float: 'right'}}
-
+      ) : (
+        <Chessboard
+          style={{ float: "right" }}
           position={game.fen()}
           onPieceDrop={onDrop}
           id="BasicBoard"
           boardOrientation={
             props.setting.multiplayer_playas == "b" ? "black" : "white"
           }
-        />}
-        <Grid style={{width: '100%',}} container justifyContent={'space-between'}>
-          <Grid  item style={{display: 'flex', flexDirection: 'row'}}>
-        <Avatar
-              variant="square"
-                alt={props.user.username.toUpperCase() || "Opponent"}
-                src="/static/images/avatar/1.jpg"
-              />
-              <Typography className="gameHistoryUsername">{props.user.username || "Opponent"}</Typography>
-              </Grid>
-              <Grid className="game-clock-container">
-                <Paper className="game-clock game-clock-own">
-                {timeFormatter(myClock)}
-                </Paper>
-              </Grid>
+        />
+      )}
+      <Grid
+        style={{ width: "100%" }}
+        container
+        justifyContent={"space-between"}
+      >
+        <Grid item style={{ display: "flex", flexDirection: "row" }}>
+          <Avatar
+            variant="square"
+            alt={props.user.username.toUpperCase() || "Opponent"}
+            src="/static/images/avatar/1.jpg"
+          />
+          <Typography className="gameHistoryUsername">
+            {props.user.username || "Opponent"}
+          </Typography>
+        </Grid>
+        <Grid className="game-clock-container">
+          <Paper className="game-clock game-clock-own">
+            {timeFormatter(myClock)}
+          </Paper>
         </Grid>
       </Grid>
+    </Grid>
   );
 }
 
@@ -444,6 +459,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   setMultiplayer: (payload) => dispatch(setMultiplayer(payload)),
+  setGameStarted: () => dispatch(setGameOnGoing()),
+  setGameOver: () => dispatch(setGameOver())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MultiPlayer);

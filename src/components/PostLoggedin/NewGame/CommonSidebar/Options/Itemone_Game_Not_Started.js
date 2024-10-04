@@ -10,6 +10,7 @@ import TimeSelector from "../Components/TimeSelector";
 import PlayAsSelector from "../Components/PlayAsSelector";
 import { setUserSetting } from "../../../../../Redux/Action/SettingsAction";
 import { setGameOnGoing } from "../../../../../Redux/Action/GameAction";
+import FullScreenLoading from "../../../../Common/FullScreenLoading";
 
 function Itemone(props) {
   const [ready, val, send] = useContext(WebsocketContext);
@@ -18,12 +19,14 @@ function Itemone(props) {
   const [time, setTime] = useState(props.setting.time);
   const [difficulty, setDifficulty] = useState(props.setting.difficulty);
   const [playas, setPlayas] = useState(props.setting.playas);
+  const [loading, setLoading] = useState(false)
 
   const handleGameSearch = () => {
     if (against == 0) {
       props.setGameStarted()
     }
     else {
+      setLoading(true)
       send(
         JSON.stringify({
           action: "Search",
@@ -36,6 +39,16 @@ function Itemone(props) {
         })
       );
     }
+  };
+
+  const handleGameSearchCancel = () => {
+    setLoading(false)
+    send(
+      JSON.stringify({
+        action: "Cancel_Search",
+        payload: { id: props.user.id, format: props.setting.time },
+      })
+    );
   };
 
   const handleAgainstChange = (val) => {
@@ -68,6 +81,7 @@ function Itemone(props) {
 
   return (
     <Grid container>
+      {props.game.game_status == 0 && loading && <FullScreenLoading onCancel={handleGameSearchCancel} />}
       <Typography className="play-text">Play?</Typography>
       <div class="container2">
         <div
