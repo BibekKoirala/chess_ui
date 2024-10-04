@@ -93,6 +93,9 @@ export default function CustomSidebar(props) {
           {
             props.game.game_status == 1 && <Itemone_Game_OnGoing {...props} />
           }
+          {
+            props.game.game_status == 2 && <Itemone_Game_Not_Started {...props} />
+          }
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Itemtwo />

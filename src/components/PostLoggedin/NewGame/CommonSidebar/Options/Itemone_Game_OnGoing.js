@@ -11,7 +11,7 @@ import {
   import { WebsocketContext } from "../../../../WebsocketContext";
   import { connect } from "react-redux";
   import { GameAction } from "../../../../../Common/CommonEnum";
-import { setGameNotStarted } from "../../../../../Redux/Action/GameAction";
+import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/GameAction";
   
   function Itemone(props) {
     const [ready, val, send] = useContext(WebsocketContext);
@@ -72,7 +72,7 @@ import { setGameNotStarted } from "../../../../../Redux/Action/GameAction";
   
     const handleResign = () => {
         if (props.setting.against == 0) {
-            props.setGameNotStarted()
+            props.setGameOver()
         }
         else{
             send(
@@ -209,7 +209,8 @@ import { setGameNotStarted } from "../../../../../Redux/Action/GameAction";
 
  
 const mapDispatchToProps = (dispatch) => ({
-    setGameNotStarted: () => dispatch(setGameNotStarted())
+    setGameNotStarted: () => dispatch(setGameNotStarted()),
+    setGameOver: () => dispatch(setGameOver())
   })
   
   export default connect(mapStateToProps, mapDispatchToProps)(Itemone);
