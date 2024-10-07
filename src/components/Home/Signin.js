@@ -23,6 +23,7 @@ import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import CustomSnackbar from "../Common/Snackbar";
+import { fetchUserRating } from "../../Redux/Action/RatingAction";
 
 const theme = createTheme();
 
@@ -79,6 +80,7 @@ function SignIn(props) {
               JSON.stringify(res.data.data)
             );
             localStorage.setItem("ch_token", res.data.data.token)
+            props.setRating()
             navigate("/game");
             messageRef.current.showMessage(
               res.data.message,
@@ -226,6 +228,7 @@ const mapStateToProps = (state) => ({});
 const mapDispatchToProps = (dispatch) => {
   return {
     setUser: (user) => dispatch({ type: Set_UserInfo, payload: user }),
+    setRating: () => dispatch(fetchUserRating())
   };
 };
 

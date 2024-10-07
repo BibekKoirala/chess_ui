@@ -72,7 +72,6 @@ export default function CustomSidebar(props) {
               {...a11yProps(0)}
             />
             <Tab
-              disabled
               label={<GroupIcon style={{ color: "black" }} />}
               {...a11yProps(1)}
             />

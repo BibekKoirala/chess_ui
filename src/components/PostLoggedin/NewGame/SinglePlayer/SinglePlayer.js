@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Chessboard } from "react-chessboard";
-import { Grid } from "@mui/material";
+import { Avatar, Grid, Typography } from "@mui/material";
 import { Chess } from "chess.js";
 import { connect } from "react-redux";
 import ChessEngine from "./engineClass";
@@ -11,11 +11,14 @@ import {
   setGameOnGoing,
   setGameOver,
 } from "../../../../Redux/Action/GameAction";
+
+import bot from "../../../../Images/Bot.png";
+import human from "../../../../Images/Human.png";
 // import engineGame from "./engine";
 
 function SinglePlayer(props) {
   const [Engine, setEngine] = useState(new ChessEngine(props.setting.playas));
-  const [game, setGame] = useState();
+  const [game, setGame] = useState(Engine.game);
   const [gameResult, setGameResult] = useState(null); // "win", "lose", or "draw"
   const [gameReason, setGameReason] = useState(null); // e.g., "Checkmate", "Timeout", "Resignation"
 
@@ -31,8 +34,9 @@ function SinglePlayer(props) {
         setTimeout(() => setGame(Engine.GetCurrentPosition()), 1000);
       }
     } else if (props.game.game_status == 0){
-      setEngine(new ChessEngine(props.setting.playas));
-      setGame(new Chess());
+      Engine.game.reset()
+      Engine.player = props.setting.playas
+      // setGame(new Chess());
     }
     else {
       if (!Engine.game.isGameOver()) {
@@ -131,14 +135,16 @@ function SinglePlayer(props) {
   }
 
   function onRematch() {
-    setEngine(new ChessEngine(props.setting.playas));
+    Engine.game.reset()
+    Engine.player = props.setting.playas
+    // setEngine(new ChessEngine(props.setting.playas));
     setGame(new Chess());
     props.setGameOnGoing();
-
-
   }
 
   function onNewGame() {
+    Engine.game.reset()
+    setGame(new Chess())
     props.setGameNotStarted();
   }
 
@@ -154,6 +160,17 @@ function SinglePlayer(props) {
           onClose={onNewGame}
         />
       )}
+      <Grid item style={{ display: "flex", flexDirection: "row" }}>
+          <Avatar
+            variant="square"
+            alt={'Bot'}
+            src={bot}
+            style={{width: 70, height: 70}}
+          />
+          <Typography fontSize={'1.6em'} fontWeight={'bold'} className="gameHistoryUsername">
+            {"Bot"}
+          </Typography>
+        </Grid>
       <Chessboard
         areArrowsAllowed
         position={game}
@@ -161,11 +178,23 @@ function SinglePlayer(props) {
         id="BasicBoard"
         boardOrientation={props.setting.playas == "b" ? "black" : "white"}
       />
+      <Grid item style={{ display: "flex", flexDirection: "row" }}>
+          <Avatar
+            variant="square"
+            alt={props.user.username.toUpperCase()}
+            src={human}
+            style={{width: 70, height: 70}}
+          />
+          <Typography fontSize={'1.6em'} fontWeight={'bold'} className="gameHistoryUsername">
+            {props.user.username }
+          </Typography>
+        </Grid>
     </>
   );
 }
 
 const mapStateToProps = (state) => ({
+  user: state.User,
   setting: state.setting,
   game: state.game,
 });

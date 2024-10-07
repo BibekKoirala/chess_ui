@@ -17,20 +17,7 @@ import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/Game
     const [ready, val, send] = useContext(WebsocketContext);
     const [open, setOpen] = useState(false);
     const [drawOfferedBy, setDrawOffered] = useState(false);
-  
-    const handleGameSearch = () => {
-      send(
-        JSON.stringify({
-          action: "Search",
-          payload: {
-            token: props.user.token,
-            id: props.user.id,
-            username: props.user.username,
-            format: props.setting.time,
-          },
-        })
-      );
-    };
+
   
     const handleClose = () => {
       setOpen(false);

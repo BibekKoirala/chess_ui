@@ -90,7 +90,7 @@ function Itemone(props) {
             borderColor: `${against == 0 ? "#007BFF" : "#B0BEC5"}`,
             backgroundColor: `${against == 0 ? "#E3F2FD" : "#F5F5F5"}`,
           }}
-          className="settingoptions"
+          className="settingoptions game-icon"
         >
           <Avatar
             alt="Bot"
@@ -111,7 +111,7 @@ function Itemone(props) {
             borderColor: `${against == 1 ? "#007BFF" : "#B0BEC5"}`,
             backgroundColor: `${against == 1 ? "#E3F2FD" : "#F5F5F5"}`,
           }}
-          className="settingoptions"
+          className="settingoptions game-icon"
         >
           <Avatar
             alt="Human"
@@ -125,13 +125,7 @@ function Itemone(props) {
 
       <Grid
         container
-        style={{
-          marginTop: 20,
-          paddingBottom: 20,
-          borderRadius: 10,
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          border: "1px solid #B0BEC5",
-        }}
+        className="game-settings"
         justifyContent="space-around"
         alignItems="center"
       >
@@ -155,7 +149,7 @@ function Itemone(props) {
       </Grid>
       <Button
         onClick={handleGameSearch}
-        className="btn-newgame"
+        className="btn-newgame game-icon"
         variant="contained"
       >
         New Game

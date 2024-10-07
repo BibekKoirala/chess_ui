@@ -30,11 +30,10 @@ const TimeSelector = ({ time, handleTimeChange }) => {
             paddingBlock: "5px",
             paddingInline: "20px",
             borderRadius: '10px',
-            transition: 'background-color 0.3s, border-color 0.3s',
             margin: "0 10px",
             width: '100%', // Set to 100% for responsive sizing
           }}
-          className={"timeoptions timesetting"}
+          className={"timeoptions timesetting game-icon"}
           xs={5} // Adjusted to allow two items per row
         >
           <Icon style={{ textAlign: "center" }}>
