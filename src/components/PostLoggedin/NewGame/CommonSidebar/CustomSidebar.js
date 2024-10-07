@@ -72,7 +72,6 @@ export default function CustomSidebar(props) {
               {...a11yProps(0)}
             />
             <Tab
-              disabled
               label={<GroupIcon style={{ color: "black" }} />}
               {...a11yProps(1)}
             />
@@ -92,6 +91,9 @@ export default function CustomSidebar(props) {
           }
           {
             props.game.game_status == 1 && <Itemone_Game_OnGoing {...props} />
+          }
+          {
+            props.game.game_status == 2 && <Itemone_Game_Not_Started {...props} />
           }
         </TabPanel>
         <TabPanel value={value} index={1}>

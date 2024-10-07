@@ -1,7 +1,8 @@
 import React from "react";
+import UserRatingDisplay from "../../../../Common/Rating";
 
 function Itemtwo() {
-  return <div>Itemtwo</div>;
+  return <UserRatingDisplay />;
 }
 
 export default Itemtwo;

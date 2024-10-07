@@ -11,26 +11,13 @@ import {
   import { WebsocketContext } from "../../../../WebsocketContext";
   import { connect } from "react-redux";
   import { GameAction } from "../../../../../Common/CommonEnum";
-import { setGameNotStarted } from "../../../../../Redux/Action/GameAction";
+import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/GameAction";
   
   function Itemone(props) {
     const [ready, val, send] = useContext(WebsocketContext);
     const [open, setOpen] = useState(false);
     const [drawOfferedBy, setDrawOffered] = useState(false);
-  
-    const handleGameSearch = () => {
-      send(
-        JSON.stringify({
-          action: "Search",
-          payload: {
-            token: props.user.token,
-            id: props.user.id,
-            username: props.user.username,
-            format: props.setting.time,
-          },
-        })
-      );
-    };
+
   
     const handleClose = () => {
       setOpen(false);
@@ -72,7 +59,7 @@ import { setGameNotStarted } from "../../../../../Redux/Action/GameAction";
   
     const handleResign = () => {
         if (props.setting.against == 0) {
-            props.setGameNotStarted()
+            props.setGameOver()
         }
         else{
             send(
@@ -209,7 +196,8 @@ import { setGameNotStarted } from "../../../../../Redux/Action/GameAction";
 
  
 const mapDispatchToProps = (dispatch) => ({
-    setGameNotStarted: () => dispatch(setGameNotStarted())
+    setGameNotStarted: () => dispatch(setGameNotStarted()),
+    setGameOver: () => dispatch(setGameOver())
   })
   
   export default connect(mapStateToProps, mapDispatchToProps)(Itemone);

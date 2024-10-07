@@ -18,10 +18,9 @@ const PlayAsSelector = ({ playas, handlePlayasChange }) => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          transition: 'background-color 0.3s, border-color 0.3s',
           marginRight: '10px' // Space between options and divider
         }}
-        className="settingoptions"
+        className="settingoptions game-icon"
       >
         <Avatar
           alt="Black Player"
@@ -45,10 +44,9 @@ const PlayAsSelector = ({ playas, handlePlayasChange }) => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          transition: 'background-color 0.3s, border-color 0.3s',
           marginLeft: '10px' // Space between options and divider
         }}
-        className="settingoptions"
+        className="settingoptions game-icon"
       >
         <Avatar
           alt="White Player"

@@ -1,18 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { Chessboard } from "react-chessboard";
-import {
-  Avatar,
-  Backdrop,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Avatar, Grid, Paper, Typography } from "@mui/material";
 import { Chess } from "chess.js";
 import { connect } from "react-redux";
 import { BaseUrl } from "../../../../ServerSetting";
@@ -23,11 +11,15 @@ import {
 import { setMultiplayer } from "../../../../Redux/Action/SettingsAction";
 import CircularProgressBar from "@mui/material/CircularProgress";
 import { WebsocketContext } from "../../../WebsocketContext";
-import Sideoption from "./StartSidebar/Sideoption";
-import GameSideoption from "./GameSidebar/GameSideoption";
-import SearchSideoption from "./SearchSidebar/SearchSideoption";
 import CustomSnackbar from "../../../Common/Snackbar";
-import { setGameOnGoing, setGameOver } from "../../../../Redux/Action/GameAction";
+import {
+  setGameNotStarted,
+  setGameOnGoing,
+  setGameOver,
+} from "../../../../Redux/Action/GameAction";
+import GameoverModal from "../../../Common/GameoverModal";
+import FullScreenLoading from "../../../Common/FullScreenLoading";
+import human from "../../../../Images/Human.png";
 
 function MultiPlayer(props) {
   const [game, setGame] = useState(new Chess());
@@ -45,6 +37,7 @@ function MultiPlayer(props) {
   const [opponentInfo, setOpponentInfo] = useState({});
   const [myClock, setMyClock] = useState(0);
   const [opponentClock, setOpponentClock] = useState(0);
+  const [gameResult, setGameResult] = useState("");
 
   const messageRef = useRef("");
   const timerRef = useRef(15);
@@ -54,8 +47,8 @@ function MultiPlayer(props) {
       setMyClock(60);
       setOpponentClock(60);
     } else if (props.setting.time == 1) {
-      setMyClock(180);
-      setOpponentClock(180);
+      setMyClock(300);
+      setOpponentClock(300);
     } else if (props.setting.time == 2) {
       setMyClock(600);
       setOpponentClock(600);
@@ -77,7 +70,6 @@ function MultiPlayer(props) {
     setSearch(false);
     setStart(true);
     setGameHistory(false);
-    
   };
 
   const handleSearch = () => {
@@ -126,7 +118,7 @@ function MultiPlayer(props) {
           case GameAction.Game_Started: {
             setLoading(false);
             handleStart();
-            props.setGameStarted()
+            props.setGameStarted();
             props.setMultiplayer({
               multiplayertoken: message.payload.token,
               multiplayer_playas: message.payload.piece,
@@ -139,28 +131,31 @@ function MultiPlayer(props) {
             break;
           }
           case GameAction.Game_Over: {
-            props.setGameStarted()
             if (message.payload.draw) {
               try {
                 makeAMove(message.payload.move);
               } catch (e) {
                 console.log(e.message);
               }
+              setGameResult("draw");
             } else if (!message.payload.win) {
               makeAMove(message.payload.move);
+              setGameResult("lose");
+            } else {
+              setGameResult("win");
             }
             props.setMultiplayer({
               multiplayertoken: null,
               multiplayer_playas: props.setting.multiplayer_playas,
             });
             setTimeout(() => {
-              setOpen(true);
+              props.setGameOver();
             }, 1000);
             setEndCondition(message.message);
             break;
           }
           case GameAction.Rejoin_Success: {
-            props.setGameStarted()
+            props.setGameStarted();
             let tempgame = new Chess(message.payload.fen);
             tempgame._history = message.payload.history;
             setGame(tempgame);
@@ -219,6 +214,14 @@ function MultiPlayer(props) {
           case GameAction.Game_Clock: {
             setMyClock(message.payload.ownclock);
             setOpponentClock(message.payload.opponentclock);
+            break;
+          }
+          case GameAction.Player_Rating: {
+
+            break;
+          }
+          case GameAction.Opponent_Rating: {
+            break;
           }
         }
       }
@@ -360,33 +363,57 @@ function MultiPlayer(props) {
     }`;
   };
 
+  const onNewGame = () => {
+    props.setGameNotStarted();
+  };
+
+  const handleGameSearch = () => {
+    props.setGameNotStarted();
+    setLoading(true);
+    send(
+      JSON.stringify({
+        action: "Search",
+        payload: {
+          token: props.user.token,
+          id: props.user.id,
+          username: props.user.username,
+          format: props.setting.time,
+        },
+      })
+    );
+  };
+
+  const handleGameSearchCancel = () => {
+    setLoading(false);
+    send(
+      JSON.stringify({
+        action: "Cancel_Search",
+        payload: { id: props.user.id, format: props.setting.time },
+      })
+    );
+  };
+
   return (
     <Grid className="multiplayer-chessboard">
       <CustomSnackbar ref={messageRef} />
 
-      <Dialog open={open}>
-        <DialogTitle>{endCondition}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose}>Agree</Button>
-        </DialogActions>
-      </Dialog>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgressBar color="inherit" />
-        <Typography>Searching for opponent.</Typography>
-      </Backdrop>
+      {props.game.game_status == 2 && (
+        <GameoverModal
+          result={gameResult}
+          reason={endCondition}
+          opponent={opponentInfo?.username?.toUpperCase() || "Opponent"}
+          onRematch={onNewGame}
+          onNewGame={handleGameSearch}
+          onClose={onNewGame}
+        />
+      )}
+
+      {props.game.game_status == 0 && loading && (
+        <FullScreenLoading onCancel={handleGameSearchCancel} />
+      )}
 
       <Grid
-        style={{ width: "100%" }}
+        style={{ width: "100%",}}
         container
         justifyContent={"space-between"}
       >
@@ -394,9 +421,10 @@ function MultiPlayer(props) {
           <Avatar
             variant="square"
             alt={opponentInfo?.username?.toUpperCase() || "Opponent"}
-            src="/static/images/avatar/1.jpg"
+            src={human}
+            style={{width: 70, height: 70}}
           />
-          <Typography className="gameHistoryUsername">
+          <Typography fontSize={'1.6em'} fontWeight={'bold'} className="gameHistoryUsername">
             {opponentInfo.username || "Opponent"}
           </Typography>
         </Grid>
@@ -436,9 +464,10 @@ function MultiPlayer(props) {
           <Avatar
             variant="square"
             alt={props.user.username.toUpperCase() || "Opponent"}
-            src="/static/images/avatar/1.jpg"
+            src={human}
+            style={{width: 70, height: 70}}
           />
-          <Typography className="gameHistoryUsername">
+          <Typography fontSize={'1.6em'} fontWeight={'bold'} className="gameHistoryUsername">
             {props.user.username || "Opponent"}
           </Typography>
         </Grid>
@@ -455,12 +484,14 @@ function MultiPlayer(props) {
 const mapStateToProps = (state) => ({
   user: state.User,
   setting: state.setting,
+  game: state.game,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   setMultiplayer: (payload) => dispatch(setMultiplayer(payload)),
   setGameStarted: () => dispatch(setGameOnGoing()),
-  setGameOver: () => dispatch(setGameOver())
+  setGameOver: () => dispatch(setGameOver()),
+  setGameNotStarted: () => dispatch(setGameNotStarted()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MultiPlayer);

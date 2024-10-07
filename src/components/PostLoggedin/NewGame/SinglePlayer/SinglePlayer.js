@@ -1,35 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { Chessboard } from "react-chessboard";
-import { Grid } from "@mui/material";
+import { Avatar, Grid, Typography } from "@mui/material";
 import { Chess } from "chess.js";
 import { connect } from "react-redux";
 import ChessEngine from "./engineClass";
 import { GameAction } from "../../../../Common/CommonEnum";
+import GameoverModal from "../../../Common/GameoverModal";
+import {
+  setGameNotStarted,
+  setGameOnGoing,
+  setGameOver,
+} from "../../../../Redux/Action/GameAction";
+
+import bot from "../../../../Images/Bot.png";
+import human from "../../../../Images/Human.png";
 // import engineGame from "./engine";
 
 function SinglePlayer(props) {
-  const [Engine, setEngine] = useState(new ChessEngine(props.setting.playas))
-  const [game, setGame] = useState();
-  const { difficulty, playas } = props.setting;
+  const [Engine, setEngine] = useState(new ChessEngine(props.setting.playas));
+  const [game, setGame] = useState(Engine.game);
+  const [gameResult, setGameResult] = useState(null); // "win", "lose", or "draw"
+  const [gameReason, setGameReason] = useState(null); // e.g., "Checkmate", "Timeout", "Resignation"
 
   useEffect(() => {
-    console.log(Engine.get_moves())
-    // Engine.OnEngineMessage({data: 'Make'})
-    setTimeout(()=> setGame(Engine.GetCurrentPosition()), 1000)
+    setTimeout(() => setGame(Engine.GetCurrentPosition()), 1000);
   }, [game]);
 
   useEffect(() => {
-    console.log(props.game)
-    if (props.game.game_status == 1) {
-      if (props.setting.playas == 'b') {
-        Engine.prepareMove()
-    setTimeout(()=> setGame(Engine.GetCurrentPosition()), 1000)
 
+    if (props.game.game_status == 1) {
+      if (props.setting.playas == "b") {
+        Engine.prepareMove();
+        setTimeout(() => setGame(Engine.GetCurrentPosition()), 1000);
       }
+    } else if (props.game.game_status == 0){
+      Engine.game.reset()
+      Engine.player = props.setting.playas
+      // setGame(new Chess());
     }
     else {
-      setEngine(new ChessEngine(props.setting.playas))
-      setGame(new Chess())
+      if (!Engine.game.isGameOver()) {
+        setGameResult("lose");
+        setGameReason('Resignation');
+        props.setGameOver();
+      }
+        
     }
     // if (game.turn() !== playas) {
     //     if (difficulty == 1) {
@@ -45,31 +60,39 @@ function SinglePlayer(props) {
     // console.log(game.history({verbose: true}))
   }, [props.game.game_status]);
 
-  useEffect(()=>{
-    var action, message;
-    if (Engine.game.turn() == props.setting.playas) {
-      console.log("You lost")
+  useEffect(() => {
+    if (props.game.game_status == 1) {
+      var message;
+      console.log(Engine.game)
+      if (Engine.game.isCheckmate()) {
+        message = "Checkmate";
+        if (Engine.game.turn() == props.setting.playas) {
+          setGameResult("lose");
+        } else {
+          setGameResult("win");
+        }
+      } else if (Engine.game.isStalemate()) {
+        message = "Stalemate";
+        setGameResult("draw");
+      } else if (Engine.game.isInsufficientMaterial()) {
+        message = "Insufficient Material";
+        setGameResult("draw");
+      } else if (Engine.game.isThreefoldRepetition()) {
+        message = "Threefold repetition";
+        setGameResult("draw");
+      } else if (Engine.game.isDraw()) {
+        message = "Draw";
+        setGameResult("draw");
+      } else {
+        message = "Draw";
+        setGameResult("draw");
+        props.setGameNotStarted()
+      }
+      setGameReason(message);
+      props.setGameOver();
     }
-    if (Engine.game.isCheckmate()) {
-      action = GameAction.Is_CheckMate;
-      message = "Checkmate";
-    } else if (Engine.game.isStalemate()) {
-      action = GameAction.Is_StaleMate;
-      message = "Stalemate";
-    } else if (Engine.game.isInsufficientMaterial()) {
-      action = GameAction.Is_InsufficientMaterial;
-      message = "Insufficient Material";
-    } else if (Engine.game.isThreefoldRepetition()) {
-      action = GameAction.Is_ThreeFold;
-      message = "Threefold repetition";
-    } else if (Engine.game.isDraw()) {
-      action = GameAction.Is_Draw;
-      message = "Draw";
-    } else {
-      action = GameAction.Is_Draw;
-      message = "Draw";
-    }
-  }, [Engine.game.isGameOver()])
+    
+  }, [Engine.game.isGameOver()]);
 
   function makeEasyMove() {
     const possibleMoves = game.moves();
@@ -104,33 +127,82 @@ function SinglePlayer(props) {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    console.log(props.game.game_status)
+    console.log(props.game.game_status);
     if (props.game.game_status == 1) {
       Engine.onDrop(sourceSquare, targetSquare);
       setGame(Engine.GetCurrentPosition());
     }
-   
+  }
+
+  function onRematch() {
+    Engine.game.reset()
+    Engine.player = props.setting.playas
+    // setEngine(new ChessEngine(props.setting.playas));
+    setGame(new Chess());
+    props.setGameOnGoing();
+  }
+
+  function onNewGame() {
+    Engine.game.reset()
+    setGame(new Chess())
+    props.setGameNotStarted();
   }
 
   return (
-
-        <Chessboard
-          areArrowsAllowed
-          position={game}
-          onPieceDrop={onDrop}
-          id="BasicBoard"
-          boardOrientation={props.setting.playas == "b" ? "black" : "white"}
+    <>
+      {props.game.game_status == 2 && (
+        <GameoverModal
+          result={gameResult}
+          reason={gameReason}
+          opponent={"BOT"}
+          onRematch={onRematch}
+          onNewGame={onNewGame}
+          onClose={onNewGame}
         />
-
-
+      )}
+      <Grid item style={{ display: "flex", flexDirection: "row" }}>
+          <Avatar
+            variant="square"
+            alt={'Bot'}
+            src={bot}
+            style={{width: 70, height: 70}}
+          />
+          <Typography fontSize={'1.6em'} fontWeight={'bold'} className="gameHistoryUsername">
+            {"Bot"}
+          </Typography>
+        </Grid>
+      <Chessboard
+        areArrowsAllowed
+        position={game}
+        onPieceDrop={onDrop}
+        id="BasicBoard"
+        boardOrientation={props.setting.playas == "b" ? "black" : "white"}
+      />
+      <Grid item style={{ display: "flex", flexDirection: "row" }}>
+          <Avatar
+            variant="square"
+            alt={props.user.username.toUpperCase()}
+            src={human}
+            style={{width: 70, height: 70}}
+          />
+          <Typography fontSize={'1.6em'} fontWeight={'bold'} className="gameHistoryUsername">
+            {props.user.username }
+          </Typography>
+        </Grid>
+    </>
   );
 }
 
 const mapStateToProps = (state) => ({
+  user: state.User,
   setting: state.setting,
-  game: state.game
+  game: state.game,
 });
 
-const mapDispatchToProps = (dispatch) => ({});
+const mapDispatchToProps = (dispatch) => ({
+  setGameNotStarted: () => dispatch(setGameNotStarted()),
+  setGameOnGoing: () => dispatch(setGameOnGoing()),
+  setGameOver: () => dispatch(setGameOver()),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(SinglePlayer);

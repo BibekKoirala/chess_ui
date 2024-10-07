@@ -16,6 +16,7 @@ const DifficultySelector = ({ difficulty, handleDifficultyChange }) => {
           item
           key={index}
           onClick={() => handleDifficultyChange(index)}
+          className="game-icon"
           style={{
             textAlign: "center",
             cursor: "pointer",
@@ -24,7 +25,6 @@ const DifficultySelector = ({ difficulty, handleDifficultyChange }) => {
             paddingInline: "20px",
             border: `2px solid ${difficulty === index ? diff.color : "#B0BEC5"}`,
             backgroundColor: `${difficulty === index ? diff.bgColor : "#F5F5F5"}`,
-            transition: "background-color 0.3s, border-color 0.3s",
             margin: "0 10px", // Add horizontal space between items
             minWidth: "100px", // Ensures consistent width for all options
           }}

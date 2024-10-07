@@ -6,11 +6,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: antiquewhite !important;
-  background-color: #0b2447 !important;
-  background-image: url("./Images/background1.jpg");
-  background-size: cover;
+  background: linear-gradient(to bottom, #f5f5dc, #c4a484);
+  height: 100%;
 }
-
+html {
+  height: 100%;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

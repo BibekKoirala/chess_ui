@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 .App {
   color: antiquewhite !important;
@@ -181,7 +181,7 @@ a {
 
 .game-clock {
   font-size: 26px;
-  font-weight:900;
+  font-weight: 900;
   padding-inline: 20px;
 }
 
@@ -197,6 +197,7 @@ a {
   gap: 30px;
   width: 100%;
   position: relative;
+  margin-bottom: 20px;
 }
 
 .settingoptions {
@@ -236,7 +237,6 @@ a {
   font-weight: bold;
 }
 
-
 .timeoptions {
   margin: 10px;
   border: 2px solid;
@@ -263,14 +263,14 @@ img {
 }
 
 .play-text {
-  font-family: 'Press Start 2P', cursive; /* Game-like retro font */
+  font-family: "Press Start 2P", cursive; /* Game-like retro font */
   font-weight: bold;
   font-size: 24px; /* Adjust font size */
   text-align: center;
   display: block; /* Ensure it behaves as a block element */
   width: 100%; /* Center it horizontally */
   margin: 20px 0; /* Optional: Adds space around the text */
-  color: #007BFF; /* Optional: Set color */
+  color: #007bff; /* Optional: Set color */
 }
 
 .difficultyoptions {
@@ -288,7 +288,6 @@ img {
 .difficultyoptions:hover {
   background-color: #f0f8ff; /* Light blue hover effect */
 }
-
 
 /* Itemone.css */
 
@@ -331,4 +330,21 @@ img {
 
 .btn-draw:hover {
   background-color: #4db34d; /* Darker green on hover */
+}
+
+.game-settings {
+  margin-top: 20px;
+  text-align: center;
+  padding: 20px;
+  background-color: #f0f4f8;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+.game-icon {
+  transition: transform 0.3s ease-in-out;
+}
+.game-icon:hover {
+  transform: translateY(-5px);
 }
