@@ -1,70 +1,101 @@
-# Getting Started with Create React App
+# ♟️ Online Chess App (Frontend)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the frontend of our powerful and engaging Online Chess App! This React-based application lets you dive into the world of chess with features like single-player modes against the Stockfish engine, multiplayer matches, and much more.
 
-## Available Scripts
+⚠️ Note: This repo contains the frontend portion of the project. You can find the backend repository here: Chess Backend.
 
-In the project directory, you can run:
+# 🚀 Features
 
-### `npm start`
+### Single Player Mode: 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Play against the renowned Stockfish5 Engine with difficulty levels:
+*   Easy 🟢
+*   Medium 🟡
+*   Hard 🔴
+    
+### Multiplayer Mode: 
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Play online with other chess enthusiasts in real time!
 
-### `npm test`
+**Player Ratings:** Track your progress in _Bullet, Blitz, Rapid, or Classical_ game modes.
+**Game History:** Review your past games and analyze your strategies.    
+**Player Options:**
+Resign when things get tough
+Offer and accept draws like a pro
+**Game Modes:**
+* Bullet ⚡
+* Blitz ⏱️
+* Rapid 🚀
+* Classical ♟️
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🎮 Demo Videos
 
-### `npm run build`
+**Multiplayer Gameplay:** [Watch the demo video](https://drive.google.com/file/d/1l6Gs9EGftBd5Jxh1SXV29_ajzWuefdh-/view?usp=sharing)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Single Player Gameplay:** [Watch the demo video](https://drive.google.com/file/d/1GjrDIbY7MXg6tQU2z_-5gCy7jss9akGG/view?usp=sharing)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🛠️ Technologies Used
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* React: Building blocks of the frontend.
+* Redux: Seamless state management.
+* MUI: Clean, responsive design.
+* Chessboard.js, Chess.js: For the chessboard and game logic.
+* Stockfish.js: To power our AI opponent.
 
-### `npm run eject`
+## 🔮 Future Enhancements
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+* Social Features: Let players connect and interact off the board.
+* Tournaments: Battle in large tournaments to see who emerges as the ultimate chess champion!
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# 💻 How to Run This Project
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### **Prerequisites**
+```bash
+Node.js (v14 or above)
+NPM or Yarn package manager
+```
+### **Steps to Run:**
 
-## Learn More
+* Clone the Repository:
+    ```bash
+    git clone https://github.com/BibekKoirala/chess_ui.git
+    cd chess_ui
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* Install Dependencies:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    If you're using NPM:
 
-### Code Splitting
+        npm install
+    Or, if you're using Yarn:
+        
+        yarn install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+* Configure Environment Variables:
 
-### Analyzing the Bundle Size
+    Check the ```/src/ServerSetting.js``` file in the root directory and add make necessary change to ```BaseUrl``` variable, like the backend API URL.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+* Run the Development Server:
 
-### Making a Progressive Web App
+    For NPM:
+        
+        npm start
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+    For Yarn:
+        
+        yarn start
 
-### Advanced Configuration
+* Access the App:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+    Open http://localhost:3000 in your browser to see the app in action!
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 📁 Backend
 
-### `npm run build` fails to minify
+Be sure to check out the backend code that powers all the multiplayer action and more: [Chess Backend.](https://github.com/BibekKoirala/chess_backend)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This section should make it clear how to get the project running locally! Feel free to update any environment variable information or backend configuration as needed.
+
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white)
+![MUI](https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
