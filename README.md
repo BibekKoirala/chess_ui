@@ -2,7 +2,7 @@
 
 Welcome to the frontend of our powerful and engaging Online Chess App! This React-based application lets you dive into the world of chess with features like single-player modes against the Stockfish engine, multiplayer matches, and much more.
 
-⚠️ Note: This repo contains the frontend portion of the project. You can find the backend repository here: Chess Backend.
+⚠️ Note: This repo contains the frontend portion of the project. You can find the backend repository here: [Chess Backend.](https://github.com/BibekKoirala/chess_backend)
 
 # 🚀 Features
 
@@ -99,3 +99,5 @@ This section should make it clear how to get the project running locally! Feel f
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white)
 ![MUI](https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
+![REST API](https://img.shields.io/badge/REST_API-4CAF50?style=for-the-badge&logo=api&logoColor=white)
+![WebSockets](https://img.shields.io/badge/WebSockets-4FC3F7?style=for-the-badge&logo=websocket&logoColor=white)
