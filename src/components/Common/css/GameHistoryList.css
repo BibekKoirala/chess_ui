@@ -1,0 +1,69 @@
+.game-history-container {
+    padding: 0px;
+    background-color: #f9f9f9;
+    border-radius: 50px !important;
+  }
+  
+  .game-history-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .game-history-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .opponent-avatar {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+  }
+  
+  
+  
+  .game-history-username {
+    font-size: 1.2em;
+    color: #333;
+  }
+  
+  .game-result {
+    display: flex;
+    align-items: center;
+  }
+  
+  .win-icon {
+    color: green;
+    font-size: 1.5rem;
+  }
+  
+  .lose-icon {
+    color: red;
+    font-size: 1.5rem;
+  }
+  
+  .draw-result {
+    font-size: 1.5rem;
+    color: #555;
+  }
+  
+  .divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+
+.game-history-item:nth-child(odd) {
+  background-color: #f5f5f5; /* Light grey for odd rows */
+}
+
+.game-history-item:nth-child(even) {
+  background-color: #e0e0e0; /* Slightly darker grey for even rows */
+}
+
+.game-history-item:hover {
+  background-color: #d6d6d6; /* A bit darker when hovered */
+}

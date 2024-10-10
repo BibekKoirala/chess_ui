@@ -3,6 +3,7 @@ import RequestHelper from "../../../../../Common/RequestHelper";
 import { Avatar, Divider, Grid, Typography } from "@mui/material";
 import { connect } from "react-redux";
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import GameHistoryList from "../../../../Common/GameHistoryList";
 
 function Itemthree(props) {
   console.log(props)
@@ -20,29 +21,7 @@ function Itemthree(props) {
   }
 
   return (
-    <Grid container flexDirection={'column'}>
-      {userGames.map((games) => {
-        
-          return (
-            <>
-            <Grid onClick={()=>handleSetHistory(games)} className="gameHistoryItem" key={games._id}>
-              <Avatar
-              variant="square"
-                alt={games.opponent.username}
-                src="/static/images/avatar/1.jpg"
-              />
-              <Typography className="gameHistoryUsername">{games.opponent.username}</Typography>
-              {
-                games.draw ?(<AddBoxIcon />):(games.winner ?("win"):("lose"))
-              }
-            </Grid>
-            <Divider />
-            </>
-          );
-        } 
-        
-        )}
-    </Grid>
+    <GameHistoryList />
   );
 }
 

@@ -11,7 +11,7 @@ import {
   import { WebsocketContext } from "../../../../WebsocketContext";
   import { connect } from "react-redux";
   import { GameAction } from "../../../../../Common/CommonEnum";
-import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/GameAction";
+import { setDrawAccepted, setDrawRejected, setGameNotStarted, setGameOver } from "../../../../../Redux/Action/GameAction";
   
   function Itemone(props) {
     const [ready, val, send] = useContext(WebsocketContext);
@@ -54,7 +54,8 @@ import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/Game
           },
         })
       );
-      setDrawOffered(false);
+      props.setDrawRejected();
+      setDrawOffered(false)
     };
   
     const handleResign = () => {
@@ -86,14 +87,15 @@ import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/Game
           },
         })
       );
-      setDrawOffered(false);
+      props.setDrawAccepted();
     };
   
     useEffect(() => {
-      if (!props.drawOffered) {
-        setDrawOffered(false);
+      if (!props.game.draw_offered) {
+        props.setDrawRejected();
+        setDrawOffered(false)
       }
-    }, [props.drawOffered]);
+    }, [props.game.drawOffered]);
   
     useEffect(() => {
       let message = val;
@@ -104,7 +106,7 @@ import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/Game
               break;
             }
             case GameAction.Draw_Rejected: {
-              setDrawOffered(false);
+              props.setDrawRejected();
               break;
             }
           }
@@ -136,7 +138,7 @@ import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/Game
         </Button>
         
         {
-            props.setting.against == 1 && (props.drawOffered ? (
+            props.setting.against == 1 && (props.game.draw_offered ? (
                 <Grid container className="draw-offer-container">
                   <Typography
                     textAlign={"center"}
@@ -192,12 +194,15 @@ import { setGameNotStarted, setGameOver } from "../../../../../Redux/Action/Game
   const mapStateToProps = (state) => ({
     user: state.User,
     setting: state.setting,
+    game: state.game
   });
 
  
 const mapDispatchToProps = (dispatch) => ({
     setGameNotStarted: () => dispatch(setGameNotStarted()),
-    setGameOver: () => dispatch(setGameOver())
+    setGameOver: () => dispatch(setGameOver()),
+    setDrawAccepted: () => dispatch(setDrawAccepted()),
+    setDrawRejected: () => dispatch(setDrawRejected())
   })
   
   export default connect(mapStateToProps, mapDispatchToProps)(Itemone);

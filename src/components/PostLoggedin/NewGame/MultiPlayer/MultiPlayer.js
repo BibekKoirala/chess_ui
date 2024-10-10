@@ -13,6 +13,9 @@ import CircularProgressBar from "@mui/material/CircularProgress";
 import { WebsocketContext } from "../../../WebsocketContext";
 import CustomSnackbar from "../../../Common/Snackbar";
 import {
+  setDrawAccepted,
+  setDrawOffered,
+  setDrawRejected,
   setGameNotStarted,
   setGameOnGoing,
   setGameOver,
@@ -20,6 +23,7 @@ import {
 import GameoverModal from "../../../Common/GameoverModal";
 import FullScreenLoading from "../../../Common/FullScreenLoading";
 import human from "../../../../Images/Human.png";
+import { fetchUserRating } from "../../../../Redux/Action/RatingAction";
 
 function MultiPlayer(props) {
   const [game, setGame] = useState(new Chess());
@@ -29,7 +33,6 @@ function MultiPlayer(props) {
   const [open, setOpen] = useState(false);
   const [start, setStart] = useState(false);
   const [opponentLeft, setOpponentLeft] = useState(false);
-  const [drawOffered, setDrawOffered] = useState(false);
   const [gameHistory, setGameHistory] = useState(false);
   const [historyGame, setHistoryGame] = useState(new Chess());
   const [historyas, setHistoryAs] = useState("w");
@@ -152,6 +155,7 @@ function MultiPlayer(props) {
               props.setGameOver();
             }, 1000);
             setEndCondition(message.message);
+            props.setRatings()
             break;
           }
           case GameAction.Rejoin_Success: {
@@ -201,20 +205,26 @@ function MultiPlayer(props) {
             break;
           }
           case GameAction.Draw_Offered: {
-            setDrawOffered(true);
+            props.setDrawOffered(true);
             break;
           }
           case GameAction.Draw_Accepted: {
+            props.setDrawAccepted()
             break;
           }
           case GameAction.Draw_Rejected: {
-            setDrawOffered(false);
+            props.setDrawRejected()
             break;
           }
           case GameAction.Game_Clock: {
             setMyClock(message.payload.ownclock);
             setOpponentClock(message.payload.opponentclock);
             break;
+          }
+          case GameAction.Opponent_Info: {
+            console.log(message.payload.opponent_info)
+            setOpponentInfo(message.payload.opponent_info)
+            break
           }
           case GameAction.Player_Rating: {
 
@@ -279,6 +289,7 @@ function MultiPlayer(props) {
   }
 
   function onDrop(sourceSquare, targetSquare) {
+    console.log(game.moves())
     if (props.setting.multiplayer_playas == game.turn()) {
       const move = makeAMove({
         from: sourceSquare,
@@ -311,7 +322,7 @@ function MultiPlayer(props) {
 
   const handleClose = () => {
     handleCancelSearch();
-    setDrawOffered(false);
+    props.setDrawOffered(false);
     setOpen(false);
   };
 
@@ -365,6 +376,8 @@ function MultiPlayer(props) {
 
   const onNewGame = () => {
     props.setGameNotStarted();
+    setGame(new Chess())
+    setOpponentInfo({})
   };
 
   const handleGameSearch = () => {
@@ -401,7 +414,7 @@ function MultiPlayer(props) {
         <GameoverModal
           result={gameResult}
           reason={endCondition}
-          opponent={opponentInfo?.username?.toUpperCase() || "Opponent"}
+          opponent={opponentInfo?.user?.username?.toUpperCase() || "Opponent"}
           onRematch={onNewGame}
           onNewGame={handleGameSearch}
           onClose={onNewGame}
@@ -420,12 +433,12 @@ function MultiPlayer(props) {
         <Grid item style={{ display: "flex", flexDirection: "row" }}>
           <Avatar
             variant="square"
-            alt={opponentInfo?.username?.toUpperCase() || "Opponent"}
+            alt={opponentInfo?.user?.username?.toUpperCase() || "Opponent"}
             src={human}
             style={{width: 70, height: 70}}
           />
           <Typography fontSize={'1.6em'} fontWeight={'bold'} className="gameHistoryUsername">
-            {opponentInfo.username || "Opponent"}
+            {opponentInfo?.user?.username || "Opponent"}
           </Typography>
         </Grid>
         <Grid className="game-clock-container">
@@ -492,6 +505,10 @@ const mapDispatchToProps = (dispatch) => ({
   setGameStarted: () => dispatch(setGameOnGoing()),
   setGameOver: () => dispatch(setGameOver()),
   setGameNotStarted: () => dispatch(setGameNotStarted()),
+  setRatings: () =>  dispatch(fetchUserRating()),
+  setDrawAccepted: () => dispatch(setDrawAccepted()),
+  setDrawOffered: () => dispatch(setDrawOffered()),
+  setDrawRejected: () => dispatch(setDrawRejected)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MultiPlayer);
