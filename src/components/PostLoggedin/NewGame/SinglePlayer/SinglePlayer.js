@@ -23,7 +23,39 @@ function SinglePlayer(props) {
   const [gameReason, setGameReason] = useState(null); // e.g., "Checkmate", "Timeout", "Resignation"
 
   useEffect(() => {
-    setTimeout(() => setGame(Engine.GetCurrentPosition()), 1000);
+    setTimeout(() => {
+      setGame(Engine.GetCurrentPosition())
+      if (Engine.game.isGameOver()) {
+        var message;
+      console.log(Engine.game)
+      if (Engine.game.isCheckmate()) {
+        message = "Checkmate";
+        if (Engine.game.turn() == props.setting.playas) {
+          setGameResult("lose");
+        } else {
+          setGameResult("win");
+        }
+      } else if (Engine.game.isStalemate()) {
+        message = "Stalemate";
+        setGameResult("draw");
+      } else if (Engine.game.isInsufficientMaterial()) {
+        message = "Insufficient Material";
+        setGameResult("draw");
+      } else if (Engine.game.isThreefoldRepetition()) {
+        message = "Threefold repetition";
+        setGameResult("draw");
+      } else if (Engine.game.isDraw()) {
+        message = "Draw";
+        setGameResult("draw");
+      } else {
+        message = "Draw";
+        setGameResult("draw");
+        props.setGameNotStarted()
+      }
+      setGameReason(message);
+      props.setGameOver();
+      }
+    }, 1000);
   }, [game]);
 
   useEffect(() => {
@@ -127,7 +159,7 @@ function SinglePlayer(props) {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    console.log(props.game.game_status);
+    console.log(Engine.game.moves(), Engine.game._moves());
     if (props.game.game_status == 1) {
       Engine.onDrop(sourceSquare, targetSquare);
       setGame(Engine.GetCurrentPosition());

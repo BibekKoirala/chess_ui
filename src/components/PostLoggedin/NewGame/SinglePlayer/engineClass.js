@@ -2,7 +2,7 @@ import { Chess } from "chess.js";
 
 export default class ChessEngine {
 
-    constructor(player, fen) {
+    constructor(player, fen, depth = 2) {
         if (fen) {
             this.game = new Chess(fen);
         } else {
@@ -13,7 +13,7 @@ export default class ChessEngine {
         
         this.engine = new Worker('stockfish.js');
         this.engineStatus = {};
-        this.time = { wtime: 100000, btime: 100000, winc: 1000, binc: 1000, depth: 10 };
+        this.time = { wtime: 100000, btime: 100000, winc: 1000, binc: 1000, depth:  depth};
         this.displayScore = false;
         this.isEngineRunning = false;
 

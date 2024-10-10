@@ -44,5 +44,6 @@ export const GameAction = {
   Is_ThreeFold: "Is_ThreeFold",
   Is_InsufficientMaterial: "Is_InsufficientMaterial",
   Player_Rating: "Player_Rating",
-  Opponent_Rating: "Opponent_Rating"
+  Opponent_Rating: "Opponent_Rating",
+  Opponent_Info: "Opponent_Info"
 };

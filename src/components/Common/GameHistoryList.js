@@ -11,9 +11,11 @@ import bulletsvg from "../../Images/bullet.svg";
 import blitzsvg from "../../Images/blitz.svg";
 import rapidsvg from "../../Images/rapid.svg";
 import classicalsvg from "../../Images/classical.svg";
+import { useNavigate } from "react-router-dom";
 
 function GameHistoryList(props) {
   const [userGames, setUserGames] = useState([]);
+  const navigate = useNavigate()
   const timeOptions = [
     { label: 'Bullet', icon: bulletsvg },
     { label: 'Blitz', icon: blitzsvg },
@@ -34,11 +36,15 @@ function GameHistoryList(props) {
   }, []);
 
   const handleSetHistory = (games) => {
-    props.handleGameHistory(games.game, games.white, games);
+    navigate('/gamehistory/:'+games._id)
   };
 
   return (
-    <Grid borderRadius={'20px'} container flexDirection="row" className="game-history-container">
+    <Grid container flexDirection="row" style={{
+      borderRadius: '20px',
+      maxHeight: '80vh', // Limit the height to viewport height
+      overflowY: 'auto', // Enable vertical scrolling when content exceeds max height
+    }} className="game-history-container">
       {userGames.map((games) => (
         <React.Fragment key={games._id}>
           <div

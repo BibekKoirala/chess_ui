@@ -27,7 +27,7 @@ const UserRatingDisplay = (props) => {
           <p className="rating-score">{props?.rating?.rating?.classical}</p>
         </div>
       </div>
-      <Grid style={{ marginTop: 20 }}>
+      <Grid style={{ marginTop: 20, maxHeight: '65vh', overflowY:'auto' }}>
         {props.showHistory && (
           <>
             <Typography

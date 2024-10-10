@@ -221,6 +221,11 @@ function MultiPlayer(props) {
             setOpponentClock(message.payload.opponentclock);
             break;
           }
+          case GameAction.Opponent_Info: {
+            console.log(message.payload.opponent_info)
+            setOpponentInfo(message.payload.opponent_info)
+            break
+          }
           case GameAction.Player_Rating: {
 
             break;
@@ -284,6 +289,7 @@ function MultiPlayer(props) {
   }
 
   function onDrop(sourceSquare, targetSquare) {
+    console.log(game.moves())
     if (props.setting.multiplayer_playas == game.turn()) {
       const move = makeAMove({
         from: sourceSquare,
@@ -370,6 +376,8 @@ function MultiPlayer(props) {
 
   const onNewGame = () => {
     props.setGameNotStarted();
+    setGame(new Chess())
+    setOpponentInfo({})
   };
 
   const handleGameSearch = () => {
@@ -406,7 +414,7 @@ function MultiPlayer(props) {
         <GameoverModal
           result={gameResult}
           reason={endCondition}
-          opponent={opponentInfo?.username?.toUpperCase() || "Opponent"}
+          opponent={opponentInfo?.user?.username?.toUpperCase() || "Opponent"}
           onRematch={onNewGame}
           onNewGame={handleGameSearch}
           onClose={onNewGame}
@@ -425,12 +433,12 @@ function MultiPlayer(props) {
         <Grid item style={{ display: "flex", flexDirection: "row" }}>
           <Avatar
             variant="square"
-            alt={opponentInfo?.username?.toUpperCase() || "Opponent"}
+            alt={opponentInfo?.user?.username?.toUpperCase() || "Opponent"}
             src={human}
             style={{width: 70, height: 70}}
           />
           <Typography fontSize={'1.6em'} fontWeight={'bold'} className="gameHistoryUsername">
-            {opponentInfo.username || "Opponent"}
+            {opponentInfo?.user?.username || "Opponent"}
           </Typography>
         </Grid>
         <Grid className="game-clock-container">

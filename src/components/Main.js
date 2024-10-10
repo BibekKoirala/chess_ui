@@ -7,6 +7,7 @@ import SecureRoute from "./SecureRoute";
 import DefaultRoute from "./DefaultRoute";
 import { CircularProgress } from "@mui/material";
 import Loader from "./Common/Loader";
+const GameHistory = lazy(() => import("./PostLoggedin/GameHistory/GameHistory"));
 const Home = lazy(() => import("./Home/Home"));
 const Forgetpassword = lazy(() =>
   import("./Prelogin/Forgetpassword/Forgetpassword")
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
     path: "/stats",
     element: <SecureRoute Component={Statistics} />,
   },
+  {
+    path: "/gamehistory/:gameid",
+    element: <SecureRoute Component={GameHistory} />
+  }
 ]);
 
 export default function () {
